@@ -14,16 +14,17 @@
     "@fortawesome/free-regular-svg-icons": "^6.2.1",
     "@fortawesome/free-solid-svg-icons": "^6.2.1",
     "@fortawesome/vue-fontawesome": "^3.0.2",
+    "crypto-random-string": "^5.0.0",
     "firebase": "^9.15.0",
     "vue": "^3.2.45",
     "vue-router": "^4.1.6",
-    "vuefire": "^3.0.1"
+    "vuefire": "^3.0.1",
+    "vuex": "^4.0.2"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.0.0",
     "autoprefixer": "^10.4.13",
     "eslint": "^8.31.0",
-    "eslint-plugin-vue": "^9.8.0",
     "eslint-plugin-vuetify": "^2.0.0-beta.2",
     "postcss": "^8.4.21",
     "sass": "^1.57.1",

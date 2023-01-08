@@ -3,11 +3,11 @@
         <div class="flex flex-col mt-64 w-96">
         
             <div class="flex justify-center">
-                <a @click="mode = true;" :class="mode ? 'active' : 'inactive'">
+                <a @click="!loading ? mode = true : ''" :class="!loading ? mode ? 'active' : 'inactive' : 'text-main_grey'">
                     SIGN UP
                 </a>
                 <a class="ml-4 mr-4">|</a>
-                <a @click="mode = false;" :class="!mode ? 'active' : 'inactive'">
+                <a @click="!loading ? mode = false : ''" :class="!loading ? !mode ? 'active' : 'inactive' : 'text-main_grey'">
                     LOG IN
                 </a>
             </div>
@@ -42,11 +42,12 @@
                 <!--PASSWORD-->
                 <div class="m-2 text-lg font-bold">PASSWORD</div>
                 <input v-model="password" class="vue-input" type="password">
-                <div v-if="usernameCheck">User not found!</div>
         
-                <button @click="isFilled2() ? login() : dummy()" class="p-2 my-4 rounded-full text-black font-bold"
-                    :class="isFilled2() ? 'bg-main_white' : 'bg-main_grey cursor-default'"> LOG IN </button>
+                <button @click="isFilled2() && !loading ? login() : dummy()" class="p-2 my-4 rounded-full text-black font-bold"
+                    :class="isFilled2() && !loading ? 'bg-main_white' : 'bg-main_grey cursor-default'"> LOG IN </button>        
             </div>
+            <font-awesome-icon v-if="loading" icon="fa-spinner" class="fa-spin-pulse" size="2xl" />
+            <div v-if="popup" class="text-red-600 font-bold text-center text-xl">User not found!</div>
         
         </div>
     </div>
@@ -61,16 +62,11 @@ import { db } from "@/firebase";
 
 const auth = getAuth();
 
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        console.log("LOGGED IN: " + user.email);
-        data.email = user.email;
-        data.loggedEmail = user.email;
-        data.username = user.username;
-    } else {
-        console.log("NO USER");
-    }
-});
+let wait = function (seconds) {
+    return new Promise((resolveFn) => {
+        setTimeout(resolveFn, seconds * 1000);
+    });
+};
 
 export default {
     name: "LoginSingUp",
@@ -86,6 +82,9 @@ export default {
             data,
             mode: true,
             dataUsername: '',
+            loading: false,
+            popup: false,
+            popupmsg: "",
         };
     },
     methods: {
@@ -93,9 +92,11 @@ export default {
             if (this.password !== this.passwordRepeat) {
                 return;
             } else {
+                this.loading = true;
                 createUserWithEmailAndPassword(auth, this.email, this.password)
                     .then(async () => {
                         // Signed in
+                        this.loading = false;
                         console.log("Uspjesna registracija!");
                         this.registered = true;
                         try {
@@ -103,12 +104,15 @@ export default {
                                 username: this.username,
                                 email: this.email,
                             });
+                            this.$router.push('/main');
                             console.log("Document written with ID: ", docRef.id);
                         } catch (e) {
+                            this.loading = false;
                             console.error("Error adding document: ", e);
                         }
                     })
                     .catch((e) => {
+                        this.loading = false;
                         let error = e.message.slice(22, -2).replace(/-/g, " ");
                         error = error.charAt(0).toUpperCase() + error.slice(1) + "!";
                         console.error(error);
@@ -117,14 +121,17 @@ export default {
         },
         async login() {
             console.log("login..." + this.email);
-
+            this.loading = true;
             signInWithEmailAndPassword(getAuth(), this.email, this.password)
                 .then((result) => {
                     console.log("Uspješna prijava", result);
+                    this.loading = false;
                     this.getUserData();
-                    this.$router.push('/main')
+                    this.$router.push('/main');
                 })
                 .catch((e) => {
+                    this.loading = false;
+                    this.popAlert("User not found!", 2);
                     let error = e.message.slice(22, -2).replace(/-/g, " ");
                     error = error.charAt(0).toUpperCase() + error.slice(1) + "!";
                     console.error(error);
@@ -141,6 +148,12 @@ export default {
                 .catch(() => {
                     console.error("Signed out error!");
                 });
+        },
+        async popAlert(msg, time) {
+            this.popup = true;
+            this.popupmsg = msg;
+            await wait(time);
+            this.popup = false;
         },
         isFilled() {
             return this.username && this.email && this.password == this.passwordRepeat && this.passwordRepeat && this.password && !this.checkUsername() ? true : false;
@@ -179,19 +192,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.vue-input {
-    padding: 8px 16px 8px 16px;
-    border-radius: 64px;
-    background: rgba(4, 38, 48, 0.5);
-    outline-width: 0;
-    border: solid #010910 2px;
-    &:hover {
-        background: rgba(4, 38, 48, 0.75);
-    }
-    &:focus {
-        background: rgba(4, 38, 48, 1);
-    }
-}
 .active {
     font-weight: bold;
     &:hover {

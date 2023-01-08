@@ -11,6 +11,8 @@ module.exports = {
                 main_blackblue: "#010910",
                 main_darktext: "#042630",
                 main_lighttext: "#A5C4C5",
+                main_green: "#50A45E",
+                main_red: "#DB392F",
             },
         },
     },

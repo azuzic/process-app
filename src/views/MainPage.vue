@@ -1,6 +1,11 @@
 <template>
     <div class="flex w-full">
-        <processes-panel></processes-panel>
+        <processes-panel/>
+        <console-panel v-if="$store.state.processSelected"/>
+        <div v-if="$store.state.processSelected" class="flex flex-col grow">
+            <top-menu />
+            <edit-process class="grow" />
+        </div>
     </div>
 </template>
 
@@ -11,11 +16,17 @@ import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signInWith
 import { collection, addDoc, getDocs } from "@/firebase";
 import { db } from "@/firebase";
 import ProcessesPanel from '../components/ProcessesPanel.vue';
+import ConsolePanel from '../components/ConsolePanel.vue';
+import TopMenu from '../components/TopMenu.vue';
+import EditProcess from '../components/EditProcess.vue';
 
 export default {
     name: "MainPage",
     components: {
-        ProcessesPanel
+        ProcessesPanel,
+        ConsolePanel,
+        TopMenu,
+        EditProcess
     },
     data() {
         return {

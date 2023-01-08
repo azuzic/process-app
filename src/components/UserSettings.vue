@@ -11,7 +11,7 @@
             </div>
         </div>
         <div class="relative">
-            <div v-if="cog" class="flex items-center justify-between absolute bottom-8 bg-main_white text-main_darktext font-bold flex w-32 p-2 rounded">
+            <div v-if="cog" @click="logout()" class="flex items-center justify-between absolute bottom-8 bg-main_white text-main_darktext font-bold flex w-32 p-2 rounded hover:cursor-pointer hover:underline">
                 Log Out <font-awesome-icon class="icon mr-2" icon="right-from-bracket" />
             </div>
             <font-awesome-icon @click="cog = !cog" class="cog" icon="cog" size="xl" />
@@ -21,7 +21,9 @@
 
 <script>
 import Label from './Label.vue';
-import { signOut } from "@/firebase";
+import { signOut, getAuth } from "@/firebase";
+
+const auth = getAuth();
 
 export default {
     name: "UserSettings",
@@ -42,6 +44,7 @@ export default {
                     data.username = "";
                     data.email = "";
                     this.dataUsername = "";
+                    this.$router.push('/');
                 })
                 .catch(() => {
                     console.error("Signed out error!");

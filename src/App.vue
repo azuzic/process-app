@@ -4,7 +4,71 @@
     </div>
 </template>
 
-<style>
+<script>
+import data from "@/data";
+import router from "@/router"
+
+import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "@/firebase";
+import { collection, addDoc, getDocs } from "@/firebase";
+import { db } from "@/firebase";
+
+const auth = getAuth();
+
+let wait = function (seconds) {
+    return new Promise((resolveFn) => {
+        setTimeout(resolveFn, seconds * 1000);
+    });
+};
+
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        console.log("LOGGED IN: " + user.email);
+        if (router.currentRoute._value.path == "/") {
+            router.push('/main');
+        }
+        data.email = user.email;
+    } else {
+        console.log("NO USER");
+        router.push('/');
+    }
+});
+
+export default {
+    name: "App",
+    components: {
+    },
+    data() {
+        return {
+        };
+    },
+    methods: {
+        async getUserData() {
+            const querySnapshot = await getDocs(collection(db, "users"));
+            querySnapshot.forEach((doc) => {
+                if (data.email === `${doc.data().email}`) {
+                    data.email = `${doc.data().email}`;
+                    data.username = `${doc.data().username}`;
+                    data.id = `${doc.id}`;
+                    this.dataUsername = `${doc.data().username}`;
+                }
+            });
+            console.log(data);
+        },
+    },
+    async mounted() {
+        while (true) {
+            await wait(0.1);
+            if (data.email != "") {
+                await this.getUserData();
+                break;
+            }
+        }
+    },
+};
+
+</script>
+
+<style lang="scss">
 @import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
 
 * {
@@ -16,5 +80,48 @@
 }
 .icon {
     filter: invert(85%) sepia(37%) saturate(962%) hue-rotate(148deg) brightness(95%) contrast(97%);
+}
+.icon2 {
+    filter: invert(20%) sepia(21%) saturate(229%) hue-rotate(133deg) brightness(88%) contrast(90%);
+}
+.vue-input {
+    padding: 8px 16px 8px 16px;
+    border-radius: 64px;
+    background: rgba(4, 38, 48, 0.5);
+    outline-width: 0;
+    border: solid #010910 2px;
+
+    &:hover {
+        background: rgba(4, 38, 48, 0.75);
+    }
+
+    &:focus {
+        background: rgba(4, 38, 48, 1);
+    }
+}
+.vue-input2 {
+    padding: 8px 16px 8px 16px;
+    border-radius: 8px;
+    background: rgba(4, 38, 48, 0.5);
+    outline-width: 0;
+    border: solid #010910 2px;
+
+    &:hover {
+        background: rgba(4, 38, 48, 0.75);
+    }
+
+    &:focus {
+        background: rgba(4, 38, 48, 1);
+        border-color: #50A45E;
+    }
+}
+.text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    /* number of lines to show */
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 </style>
