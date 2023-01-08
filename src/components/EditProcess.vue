@@ -58,6 +58,15 @@ export default {
                 this.$store.state.processSelected = false;
             }
             await deleteDoc(doc(db, "process/", hash));
+
+            let hashes = [];
+            this.$store.state.processes.forEach(process => {
+                hashes.push(process.hash);
+            });
+            let updateRef = doc(db, "users/", data.id);
+            await updateDoc(updateRef, {
+                processes: hashes
+            });
         },
         async saveProcess() {
             this.$store.state.creatingProcess = false;
