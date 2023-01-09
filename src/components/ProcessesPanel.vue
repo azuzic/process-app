@@ -8,8 +8,14 @@
 
             <!--PROCESS LIST-->
             <div>
-                <ProcessButton v-for="(item, index) in $store.state.processes" v-bind:key="index" :processActive="item.active" :name="item.name" 
-                @click="!this.$store.state.creatingProcess ? setActive(item.hash) : ''" />
+                <ProcessButton v-for="(item, index) in $store.state.processes" v-bind:key="index" 
+
+                    :processActive="item.active" 
+                    :processUpdated="item.updated"
+                    :name="item.active ? $store.state.process.name : item.name" 
+
+                    @click="!this.$store.state.creatingProcess ? setActive(item.hash) : ''" />
+
                 <AddProcessButton @click="!$store.state.creatingProcess ? createProcess() : ''" />
             </div>
         </div>
@@ -38,11 +44,16 @@ export default {
     methods: {
         //ENTER THE PROCESS
         setActive(hash) {
+            let previousHash = this.$store.state.process.hash;
+            let previousProcessUpdated = this.$store.state.processUpdated;
+            this.$store.state.currentWindow = "EditProcess";
             this.$store.state.processes.forEach(process => {
+                if (process.hash == previousHash)
+                    process.updated = previousProcessUpdated;
                 if (process.hash == hash) {
                     process.active = true;
-                    this.$store.state.process.name = process.name;
-                    this.$store.state.process.details = process.details
+                    this.$store.state.processUpdated = process.updated;
+                    this.$store.state.process = process;
                     this.$store.state.processSelected = true;
                 }
                 else
@@ -57,13 +68,14 @@ export default {
                 if (process.active)
                     process.active = false;
             });
-            let newProcess = {
+            this.$store.state.process = {
                 hash: cryptoRandomString({ length: 32, type: 'url-safe' }),
                 active: true,
+                updated: false,
                 name: "...",
                 details: "",
             };
-            this.$store.state.processes.push(newProcess);
+            this.$store.state.processes.push(this.$store.state.process);
         },
     },
 }

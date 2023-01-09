@@ -91,6 +91,22 @@ export default {
         border-color: #50A45E;
     }
 }
+.vue-select {
+    padding: 8px 16px 8px 16px;
+    border-radius: 8px;
+    background: rgba(4, 38, 48, 0.5);
+    outline-width: 0;
+    border: solid #010910 2px;
+
+    &:hover {
+        background: rgba(4, 38, 48, 0.75);
+    }
+
+    &:focus {
+        background: rgba(4, 38, 48, 1);
+        border-color: #50A45E;
+    }
+}
 .text {
     overflow: hidden;
     text-overflow: ellipsis;

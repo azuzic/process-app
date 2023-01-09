@@ -1,37 +1,64 @@
 <template>
-    <div class="bg-main_bg px-4 flex flex-col justify-between pb-3">
+    <div class="flex">
 
-        <div class="flex flex-col">
-            <b class="text-lg pl-1 mt-3 mb-1">Process Name</b>
-            <input @input="$store.state.processUpdated ? $store.dispatch('checkUpdate') : ''" v-model="$store.state.process.name" class="vue-input2" placeholder="Enter process name ..." type="text">
-            
-            <b class="text-lg pl-1 my-1">Details</b>
-            <textarea @input="$store.state.processUpdated ? $store.dispatch('checkUpdate') : ''" v-model="$store.state.process.details" class="vue-input2" placeholder="Enter details ..." type="text" rows="4"></textarea>
-            
-            <b class="text-lg pl-1 my-1">Tasks</b>
-            <div class="text-sm pl-4 pt-2 text-main_lighttext">
-                Empty ...
-            </div>
+        <div>
+
         </div>
+
+        <div class="bg-main_bg px-4 flex flex-col justify-between pb-3 grow">
+            <div class="flex flex-col">
+                <b class="text-lg pl-1 mt-3 mb-1">Task Name</b>
+                <input @input="$store.state.processUpdated ? $store.dispatch('checkUpdate') : ''" v-model="task.name"
+                    class="vue-input2" placeholder="Enter task name ..." type="text">
         
-        <div class="flex">
-            <div @click="$store.state.creatingProcess ? saveProcess() : updateProcess()" class="process justify-around bg-main_green px-4 rounded flex items-center">
-                <b class="text-lg text-main_darktext">{{ $store.state.creatingProcess ? 'Save process' : 'Update process'}}</b>
+                <b class="text-lg pl-1 my-1">Details</b>
+                <textarea @input="$store.state.processUpdated ? $store.dispatch('checkUpdate') : ''" v-model="task.details"
+                    class="vue-input2" placeholder="Enter details ..." type="text" rows="4"></textarea>
+        
+                <b class="text-lg pl-1 my-1">Fields</b>
+                <div class="flex flex-col">
+                    <AddFieldButton class="w-fit" />
+                </div>
             </div>
-            <div @click="deleteProcess()" class="process ml-4 justify-around bg-main_red px-4 rounded flex items-center">
-                <b class="text-lg text-main_darktext">Delete process</b>
+        
+            <div class="flex">
+                <div @click="$store.state.creatingProcess ? saveTask() : updateTask()"
+                    class="process justify-around bg-main_green px-4 rounded flex items-center">
+                    <b class="text-lg text-main_darktext">{{ $store.state.creatingProcess ? 'Save task' : 'Update task' }}</b>
+                </div>
+                <div @click="deleteTask()" class="process ml-4 justify-around bg-main_red px-4 rounded flex items-center">
+                    <b class="text-lg text-main_darktext">Delete task</b>
+                </div>
             </div>
         </div>
+
+        <FieldOptions />
 
     </div>
+    
+
 </template>
 
 <script>
 import { doc, db, setDoc, updateDoc, deleteDoc } from "@/firebase";
+import AddFieldButton from "./AddFieldButton.vue"
+import FieldOptions from "./FieldOptions.vue";
 export default {
-    name: "EditProcess",
+    name: "EditTask",
+    components: {
+    AddFieldButton,
+    FieldOptions
+},
+    data() {
+        return {
+            task: {
+                name: "",
+                details: ""
+            }
+        }
+    },
     methods: {
-        async deleteProcess() {
+        async deleteTask() {
             var index = this.$store.state.processes.map(e => e.active).indexOf(true);
             let hash = this.$store.state.processes[index].hash;
             if (index > -1) {
@@ -50,7 +77,7 @@ export default {
                 processes: hashes
             });
         },
-        async saveProcess() {
+        async saveTask() {
             this.$store.state.creatingProcess = false;
             let hashes = [];
             this.$store.state.processes.forEach(process => {
@@ -68,7 +95,7 @@ export default {
                 processes: hashes
             });
         },
-        async updateProcess() {
+        async updateTask() {
             this.$store.state.processUpdated = true;
             this.$store.state.processes.forEach(process => {
                 if (process.hash == this.$store.state.process.hash)

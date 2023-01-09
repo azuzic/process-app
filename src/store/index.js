@@ -9,6 +9,7 @@ export default createStore({
 
         creatingProcess: false,
         processSelected: false,
+        processUpdated: true,
 
         data: {
             username: "",
@@ -18,8 +19,9 @@ export default createStore({
         },
 
         process: {
-            hash: "",
             active: false,
+
+            hash: "",
             name: "...",
             details: "",
         },
@@ -43,11 +45,18 @@ export default createStore({
                     let process = {
                         hash: `${doc.data().hash}`,
                         active: false,
+                        updated: true,
                         name: `${doc.data().name}`,
                         details: `${doc.data().details}`,
                     };
                     this.state.processes.push(process);
                 }
+            });
+        },
+        checkUpdate({ commit, state }) {
+            this.state.processUpdated = false;
+            this.state.processes.forEach((process) => {
+                if (process.active) process.updated = false;
             });
         },
     },

@@ -12,8 +12,8 @@
 
             <!--PROCESS LIST-->
             <div>
-                <block-button :name="'Process'" icon="book" :selected="true"/>
-                <block-button :name="'Tasks'" icon="list-check" :selected="false" />
+                <block-button @click="$store.state.currentWindow ='EditProcess'" :name="'Process'" icon="book" :selected="['EditProcess', 'ProcessDiagram', 'ProcessAnalytics', 'ProcessUsers'].includes($store.state.currentWindow)"/>
+                <block-button @click="$store.state.currentWindow = 'EditTask'" :name="'Tasks'" icon="list-check" :selected="['EditTask', 'EditUsers'].includes($store.state.currentWindow)" />
                 <block-button :name="'Conversation Session'" icon="comments" :selected="false" />
                 <block-button :name="'Event Log'" icon="bell" :selected="false" />
             </div>
