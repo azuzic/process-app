@@ -5,8 +5,6 @@
             <hr/>
             <div class="overflow-scroll">
                 <vue-json-pretty showIcon :data="$store.state" />
-                <hr/>
-                <vue-json-pretty showIcon :data="data" />
             </div>
         </div>
     </div>
@@ -16,7 +14,6 @@
 </template>
 
 <script>
-import data from "@/data";
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
 
@@ -28,13 +25,7 @@ export default {
     data() {
         return {
             debug: false,
-            data: data
         }
     }
 }
 </script>
-
-<style lang="scss" scoped>
-
-</style>
-

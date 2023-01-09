@@ -8,21 +8,19 @@
 
             <!--PROCESS LIST-->
             <div>
-                <ProcessButton v-for="(item, index) in $store.state.processes" v-bind:key="index" :processActive="item.active" :name="item.name" @click="!this.$store.state.creatingProcess ? setActive(item.hash) : ''" />
+                <ProcessButton v-for="(item, index) in $store.state.processes" v-bind:key="index" :processActive="item.active" :name="item.name" 
+                @click="!this.$store.state.creatingProcess ? setActive(item.hash) : ''" />
                 <AddProcessButton @click="!$store.state.creatingProcess ? createProcess() : ''" />
             </div>
         </div>
 
-        <user-settings :userData="userData" />
+        <user-settings />
 
     </div>
 </template>
 
 <script>
-import data from "@/data"
 import AddProcessButton from './ProcessesPanel/AddProcessButton.vue'
-import { collection, addDoc, getDocs } from "@/firebase";
-import { db } from "@/firebase";
 import Label from "./ProcessesPanel/Label.vue";
 import UserSettings from './ProcessesPanel/UserSettings.vue';
 import ProcessButton from './ProcessesPanel/ProcessButton.vue';
@@ -38,6 +36,7 @@ export default {
         };
     },
     methods: {
+        //ENTER THE PROCESS
         setActive(hash) {
             this.$store.state.processes.forEach(process => {
                 if (process.hash == hash) {
@@ -50,6 +49,7 @@ export default {
                     process.active = false;
             });
         },
+        //CREATE PROCCESS, IT'S NOT YET ADDED TO THE DATABASE
         async createProcess() {
             this.$store.state.creatingProcess = true;
             this.$store.state.processSelected = true;
@@ -65,41 +65,6 @@ export default {
             };
             this.$store.state.processes.push(newProcess);
         },
-        async addNewProcess() {
-            const docRef = await addDoc(collection(db, "processes"), {
-                name: "temp",
-            });
-        },
-        async getUserData() {
-            const querySnapshot = await getDocs(collection(db, "users"));
-            let hashes = [];
-            querySnapshot.forEach((doc) => {
-                if (data.email === `${doc.data().email}`) {
-                    data.email = `${doc.data().email}`;
-                    data.username = `${doc.data().username}`;
-                    data.id = `${doc.id}`;
-                    this.dataUsername = `${doc.data().username}`;
-                    hashes = `${doc.data().processes}`;
-                }
-            });
-            const querySnapshot2 = await getDocs(collection(db, "process"));
-            querySnapshot2.forEach((doc) => {
-                if (hashes.includes(`${doc.id}`)) {
-                    let process = {
-                        hash: `${doc.data().hash}`,
-                        active: false,
-                        name: `${doc.data().name}`,
-                        details: `${doc.data().details}`,
-                    };
-                    this.$store.state.processes.push(process);
-                }
-            });
-            console.log(this.$store.state.processes);
-        },
-    },
-    async mounted() {
-        await this.getUserData();
-        this.userData = data;
     },
 }
 

@@ -6,7 +6,7 @@
             <div class="flex flex-col-reverse ml-2">
                 <Label :name="'Admin'" />
                 <div class="text-main_lighttext font-bold mb-1">
-                    {{ userData.username }}
+                    {{ $store.state.data.username }}
                 </div>
             </div>
         </div>
@@ -28,9 +28,6 @@ const auth = getAuth();
 export default {
     name: "UserSettings",
     components: { Label },
-    props: {
-        userData: Object,
-    },
     data() {
         return {
             cog: false,
@@ -41,8 +38,8 @@ export default {
             signOut(auth)
                 .then(() => {
                     console.log("Signed out!");
-                    data.username = "";
-                    data.email = "";
+                    this.$store.state.data.username = "";
+                    this.$store.state.data.email = "";
                     this.dataUsername = "";
                     this.$router.push('/');
                 })

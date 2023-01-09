@@ -6,12 +6,9 @@
 </template>
 
 <script>
-import data from "@/data";
 import router from "@/router"
 
-import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "@/firebase";
-import { collection, addDoc, getDocs } from "@/firebase";
-import { db } from "@/firebase";
+import { getAuth, onAuthStateChanged } from "@/firebase";
 import Debug from "./components/Other/debug.vue";
 
 const auth = getAuth();
@@ -22,53 +19,29 @@ let wait = function (seconds) {
     });
 };
 
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        console.log("LOGGED IN: " + user.email);
-        if (router.currentRoute._value.path == "/") {
-            router.push('/main');
-        }
-        data.email = user.email;
-    } else {
-        console.log("NO USER");
-        router.push('/');
-    }
-});
-
 export default {
     name: "App",
     components: {
         Debug
     },
-    data() {
-        return {
-        };
-    },
     methods: {
-        async getUserData() {
-            const querySnapshot = await getDocs(collection(db, "users"));
-            querySnapshot.forEach((doc) => {
-                if (data.email === `${doc.data().email}`) {
-                    data.email = `${doc.data().email}`;
-                    data.username = `${doc.data().username}`;
-                    data.id = `${doc.id}`;
-                    this.dataUsername = `${doc.data().username}`;
-                }
-            });
-            console.log(data);
-        },
     },
     async mounted() {
-        while (true) {
-            await wait(0.1);
-            if (data.email != "") {
-                await this.getUserData();
-                break;
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                console.log("LOGGED IN: " + user.email);
+                if (router.currentRoute._value.path == "/") {
+                    router.push('/main');
+                }
+                this.$store.state.data.email = user.email;
+                await this.$store.dispatch('getUserData');
+            } else {
+                console.log("NO USER");
+                router.push('/');
             }
-        }
+        });
     },
 };
-
 </script>
 
 <style lang="scss">

@@ -27,15 +27,9 @@
 </template>
 
 <script>
-import data from "@/data"
-import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "@/firebase";
-import { doc, db, setDoc, deleteObject, updateDoc, deleteDoc, getDocs, collection } from "@/firebase";
+import { doc, db, setDoc, updateDoc, deleteDoc } from "@/firebase";
 export default {
     name: "EditProcess",
-    data() {
-        return {
-        }
-    },
     methods: {
         updateProcessName() {
             this.$store.state.processes.forEach(process => {
@@ -63,7 +57,7 @@ export default {
             this.$store.state.processes.forEach(process => {
                 hashes.push(process.hash);
             });
-            let updateRef = doc(db, "users/", data.id);
+            let updateRef = doc(db, "users/", this.$store.state.data.id);
             await updateDoc(updateRef, {
                 processes: hashes
             });
@@ -82,7 +76,7 @@ export default {
                 name: newProcess.name,
                 details: newProcess.details,
             });
-            let updateRef = doc(db, "users/", data.id);
+            let updateRef = doc(db, "users/", this.$store.state.data.id);
             await updateDoc(updateRef, {
                 processes: hashes
             });

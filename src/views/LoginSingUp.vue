@@ -54,9 +54,7 @@
 </template>
 
 <script>
-import data from "@/data";
-
-import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "@/firebase";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "@/firebase";
 import { collection, addDoc, getDocs } from "@/firebase";
 import { db } from "@/firebase";
 
@@ -79,9 +77,7 @@ export default {
             password: "",
             passwordRepeat: "",
             usernameCheck: false,
-            data,
             mode: true,
-            dataUsername: '',
             loading: false,
             popup: false,
             popupmsg: "",
@@ -120,13 +116,11 @@ export default {
             }
         },
         async login() {
-            console.log("login..." + this.email);
             this.loading = true;
             signInWithEmailAndPassword(getAuth(), this.email, this.password)
-                .then((result) => {
-                    console.log("Uspješna prijava", result);
+                .then( async (result) => {
+                    console.log("Uspješna prijava");
                     this.loading = false;
-                    this.getUserData();
                     this.$router.push('/main');
                 })
                 .catch((e) => {
@@ -141,9 +135,8 @@ export default {
             signOut(auth)
                 .then(() => {
                     console.log("Signed out!");
-                    data.username = "";
-                    data.email = "";
-                    this.dataUsername = "";
+                    this.$store.state.data.username = "";
+                    this.$store.state.data.email = "";
                 })
                 .catch(() => {
                     console.error("Signed out error!");
@@ -173,20 +166,6 @@ export default {
                     this.usernameCheck = true;
             });
         },
-        async getUserData() {
-            const querySnapshot = await getDocs(collection(db, "users"));
-            querySnapshot.forEach((doc) => {
-                if (data.email === `${doc.data().email}`) {
-                    data.email = `${doc.data().email}`;
-                    data.username = `${doc.data().username}`;
-                    data.id = `${doc.id}`;
-                    this.dataUsername = `${doc.data().username}`;
-                }
-            });
-        },
-        dummy() { },
-    },
-    mounted() {
     },
 };
 </script>

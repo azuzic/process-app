@@ -12,9 +12,4 @@ export default {
         name: String,
     }
 }
-
 </script>
-
-<style lang="scss" scoped>
-
-</style>
