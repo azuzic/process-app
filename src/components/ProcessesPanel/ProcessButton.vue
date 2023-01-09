@@ -1,5 +1,5 @@
 <template>
-    <div :class="processActive ? 'selected' : !this.$store.state.creatingProcess ? 'btn' : ''" class="process mt-3 flex bg-main_bg px-2 rounded flex items-center">
+    <div :class="processActive ? 'selected' : !this.$store.state.creatingProcess ? 'btn' : ''" class="process mt-3 bg-main_bg px-2 rounded flex items-center">
         <b :class="processActive ? 'animate-pulse' : ''" class="text-xl text-main_lighttext text"> {{ name }} </b>
     </div>
 </template>

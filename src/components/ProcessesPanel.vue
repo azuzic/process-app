@@ -20,12 +20,12 @@
 
 <script>
 import data from "@/data"
-import AddProcessButton from './AddProcessButton.vue'
+import AddProcessButton from './ProcessesPanel/AddProcessButton.vue'
 import { collection, addDoc, getDocs } from "@/firebase";
 import { db } from "@/firebase";
-import Label from "./Label.vue";
-import UserSettings from './UserSettings.vue';
-import ProcessButton from './ProcessButton.vue';
+import Label from "./ProcessesPanel/Label.vue";
+import UserSettings from './ProcessesPanel/UserSettings.vue';
+import ProcessButton from './ProcessesPanel/ProcessButton.vue';
 import cryptoRandomString from 'crypto-random-string';
 
 export default {

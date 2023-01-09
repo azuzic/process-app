@@ -26,7 +26,7 @@ import data from "@/data"
 import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "@/firebase";
 import { collection, addDoc, getDocs } from "@/firebase";
 import { db } from "@/firebase";
-import BlockButton from './BlockButton.vue';
+import BlockButton from './ConsolePanel/BlockButton.vue';
 
 
 export default {

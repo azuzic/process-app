@@ -1,5 +1,6 @@
 <template>
-    <div class="bg-main_bg w-screen h-screen flex">
+    <div class="bg-main_bg w-screen h-screen flex relative">
+        <Debug/>
         <RouterView />
     </div>
 </template>
@@ -11,6 +12,7 @@ import router from "@/router"
 import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "@/firebase";
 import { collection, addDoc, getDocs } from "@/firebase";
 import { db } from "@/firebase";
+import Debug from "./components/Other/debug.vue";
 
 const auth = getAuth();
 
@@ -36,6 +38,7 @@ onAuthStateChanged(auth, (user) => {
 export default {
     name: "App",
     components: {
+        Debug
     },
     data() {
         return {

@@ -17,8 +17,8 @@ import { collection, addDoc, getDocs } from "@/firebase";
 import { db } from "@/firebase";
 import ProcessesPanel from '../components/ProcessesPanel.vue';
 import ConsolePanel from '../components/ConsolePanel.vue';
-import TopMenu from '../components/TopMenu.vue';
-import EditProcess from '../components/EditProcess.vue';
+import TopMenu from '../components/MainWindow/TopMenu.vue';
+import EditProcess from '../components/MainWindow/Process/EditProcess.vue';
 
 export default {
     name: "MainPage",

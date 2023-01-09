@@ -15,10 +15,10 @@
         </div>
         
         <div class="flex">
-            <div @click="saveProcess()" class="process flex justify-around bg-main_green px-4 rounded flex items-center">
+            <div @click="saveProcess()" class="process justify-around bg-main_green px-4 rounded flex items-center">
                 <b class="text-lg text-main_darktext">Save process</b>
             </div>
-            <div @click="deleteProcess()" class="process ml-4 flex justify-around bg-main_red px-4 rounded flex items-center">
+            <div @click="deleteProcess()" class="process ml-4 justify-around bg-main_red px-4 rounded flex items-center">
                 <b class="text-lg text-main_darktext">Delete process</b>
             </div>
         </div>
