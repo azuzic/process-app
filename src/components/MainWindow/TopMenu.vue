@@ -6,9 +6,11 @@
         <menu-item :selected="false" :disabled="$store.state.creatingProcess">Process <br> Analytics</menu-item>
         <menu-item :selected="false" :disabled="$store.state.creatingProcess">Process <br> Users</menu-item>
     </div>
-    <div v-if="['EditTask', 'EditUsers'].includes($store.state.currentWindow)" class="menu bg-main_blackblue flex px-4 items-center">
-        <menu-item :selected="true">Edit Task</menu-item>
-        <menu-item :selected="false">Task Users</menu-item>
+    <div v-if="['EditTask', 'TaskUsers'].includes($store.state.currentWindow)" class="menu bg-main_blackblue flex px-4 items-center">
+        <menu-item @click="!$store.state.creatingProcess ? ($store.state.currentWindow = 'EditTask', $store.dispatch('updateUserStep')) : ''"
+        :selected="$store.state.currentWindow == 'EditTask'">Edit Task</menu-item>
+        <menu-item @click="!$store.state.creatingProcess ? ($store.state.currentWindow = 'TaskUsers', $store.dispatch('updateUserStep')) : ''"
+        :selected="$store.state.currentWindow == 'TaskUsers'">Task Users</menu-item>
     </div>
 </template>
 

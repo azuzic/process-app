@@ -4,7 +4,7 @@
             <div class="text-center text-2xl font-bold"> DEBUG INFO </div>
             <hr/>
             <div class="overflow-scroll">
-                <vue-json-pretty showIcon :deep="1" :data="$store.state" />
+                <vue-json-pretty showIcon :deep="2" :data="$store.state" />
             </div>
         </div>
     </div>

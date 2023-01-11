@@ -63,6 +63,7 @@ export default {
         },
         //CREATE PROCCESS, IT'S NOT YET ADDED TO THE DATABASE
         async createProcess() {
+            this.$store.dispatch('resetValues');
             this.$store.state.creatingProcess = true;
             this.$store.state.processSelected = true;
             this.$store.state.processes.forEach(process => {

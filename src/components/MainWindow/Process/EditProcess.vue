@@ -49,6 +49,8 @@ export default {
             await updateDoc(updateRef, {
                 processes: hashes
             });
+            this.$store.dispatch('resetValues');
+            this.$store.dispatch('updateUserStep');
         },
         async saveProcess() {
             this.$store.state.creatingProcess = false;

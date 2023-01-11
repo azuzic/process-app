@@ -29,7 +29,6 @@ export default {
         setActive(hash) {
             let previousHash = this.$store.state.task.hash;
             let previousTaskUpdated = this.$store.state.taskUpdated;
-            this.$store.state.currentWindow = "EditTask";
             this.$store.state.process.tasks.forEach(task => {
                 if (task.hash == previousHash)
                     task.updated = previousTaskUpdated;
@@ -37,6 +36,9 @@ export default {
                     task.active = true;
                     this.$store.state.taskUpdated = task.updated;
                     this.$store.state.task = task;
+                    this.$store.state.task.fields.forEach(field => {
+                        field.active = false;
+                    });
                     this.$store.state.taskSelected = true;
                 }
                 else
@@ -47,6 +49,7 @@ export default {
         async createTask() {
             this.$store.state.creatingTask = true;
             this.$store.state.taskSelected = true;
+            this.$store.state.currentWindow = "EditTask";
             this.$store.state.process.tasks.forEach(task => {
                 if (task.active)
                     task.active = false;

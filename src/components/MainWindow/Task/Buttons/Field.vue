@@ -84,7 +84,7 @@ export default {
         cursor: pointer;
     }
     .o {
-            filter: invert(75%) sepia(88%) saturate(2267%) hue-rotate(347deg) brightness(92%) contrast(86%);
+        filter: invert(75%) sepia(88%) saturate(2267%) hue-rotate(347deg) brightness(92%) contrast(86%);
     }
     .x {
         filter: invert(100%) brightness(30%);

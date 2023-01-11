@@ -17,7 +17,7 @@
                 :disabled="$store.state.creatingProcess"/>
 
                 <block-button @click="!$store.state.creatingProcess ? ($store.state.currentWindow = 'EditTask', $store.dispatch('updateUserStep')) : ''" :name="'Tasks'" icon="list-check" 
-                :selected="['EditTask', 'EditUsers'].includes($store.state.currentWindow)" 
+                :selected="['EditTask', 'TaskUsers'].includes($store.state.currentWindow)" 
                 :disabled="$store.state.creatingProcess"/>
 
                 <block-button :name="'Conversation Session'" icon="comments" :selected="false" 

@@ -41,7 +41,7 @@ export default {
                 else
                     process.active = false;
             });
-            if (['EditTask', 'EditUsers'].includes(this.$store.state.data.lastWindow) && this.$store.state.data.lastTask != "") {
+            if (['EditTask', 'TaskUsers'].includes(this.$store.state.data.lastWindow) && this.$store.state.data.lastTask != "") {
                 let previousTaskHash = this.$store.state.task.hash;
                 let previousTaskUpdated = this.$store.state.taskUpdated;
                 this.$store.state.process.tasks.forEach(task => {

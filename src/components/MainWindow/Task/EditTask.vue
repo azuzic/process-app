@@ -10,8 +10,9 @@
                 <textarea @input="$store.state.taskUpdated ? $store.dispatch('checkUpdate2') : ''" v-model="$store.state.task.details"
                     class="vue-input2" placeholder="Enter details ..." type="text" rows="4"></textarea>
         
-                <b class="text-lg pl-1 my-1">Fields</b>
-                <div class="flex flex-col fields overflow-y-scroll px-4 -mx-4 overflow-x-hidden">
+                <b class="text-lg pl-1 my-2">Fields</b>
+                <hr class="border-2 border-bg_white rounded-full mb-2" />
+                <div class="flex flex-col fields overflow-y-scroll px-4 -mx-4 overflow-x-hidden pb-4">
                     <Field v-for="(item, index) in $store.state.task.fields" v-bind:key="index" 
                     :hash="item.hash" 
                     :type="item.active ? $store.state.field.type : item.type" 
@@ -21,16 +22,7 @@
                     <AddFieldButton @click="fieldSelected = true, createField()" class="w-fit" />
                 </div>
             </div>
-        
-            <div class="flex">
-                <div @click="$store.state.creatingTask ? saveTask() : updateTask()"
-                    class="process justify-around bg-main_green px-4 rounded flex items-center">
-                    <b class="text-lg text-main_darktext">{{ $store.state.creatingTask ? 'Save task' : 'Update task' }}</b>
-                </div>
-                <div @click="deleteTask()" class="process ml-4 justify-around bg-main_red px-4 rounded flex items-center">
-                    <b class="text-lg text-main_darktext">Delete task</b>
-                </div>
-            </div>
+            <TaskFuncButtons />
         </div>
 
         <FieldOptions />
@@ -46,18 +38,14 @@ import AddFieldButton from "./Buttons/AddFieldButton.vue"
 import FieldOptions from "./FieldOptions.vue";
 import Field from "./Buttons/Field.vue";
 import cryptoRandomString from 'crypto-random-string';
+import TaskFuncButtons from "./Buttons/TaskFuncButtons.vue";
 export default {
     name: "EditTask",
-    data() {
-    },
     components: {
     AddFieldButton,
     FieldOptions,
-    Field
-},
-    data() {
-        return {
-        }
+    Field,
+    TaskFuncButtons
     },
     methods: {
         setActive(hash) {
@@ -99,69 +87,11 @@ export default {
             };
             this.$store.state.task.fields.push(this.$store.state.field);
         },  
-        async deleteTask() {
-            var index = this.$store.state.process.tasks.map(e => e.active).indexOf(true);
-            let hash = this.$store.state.process.tasks[index].hash;
-            if (index > -1) {
-                this.$store.state.process.tasks.splice(index, 1);
-                this.$store.state.creatingTask = false;
-                this.$store.state.taskSelected = false;
-            }
-            await deleteDoc(doc(db, "process/" + this.$store.state.process.hash + "/tasks/", hash));
-        },
-        async saveTask() {
-            this.$store.state.creatingTask = false;
-            this.$store.state.taskUpdated = true;
-            this.$store.state.fieldSelected = false;
-            this.$store.state.process.tasks.forEach(task => {
-                if (task.active) {
-                    task = this.$store.state.task;
-                    task.updated = true;
-                    task.fields.forEach(field => {
-                        field.active = false;
-                        field.updated = true;
-                    });
-                }
-            });
-            await setDoc(doc(db, "process/" + this.$store.state.process.hash + "/tasks/", this.$store.state.task.hash), {
-                hash: this.$store.state.task.hash,
-                name: this.$store.state.task.name,
-                details: this.$store.state.task.details,
-                fields: this.$store.state.task.fields,
-            });
-        },
-        async updateTask() {
-            this.$store.state.fieldSelected = false;
-            this.$store.state.taskUpdated = true;
-            this.$store.state.process.tasks.forEach(task => {
-                if (task.hash == this.$store.state.task.hash)
-                    task.updated = true;
-            });
-            let updateRef = doc(db, "process/" + this.$store.state.process.hash + "/tasks/", this.$store.state.task.hash);
-            let fields = this.$store.state.task.fields;
-            fields.forEach(field => {
-                delete field.active;
-                delete field.updated;
-            });
-            await updateDoc(updateRef, {
-                name: this.$store.state.task.name,
-                details: this.$store.state.task.details,
-                fields: this.$store.state.task.fields,
-            });
-        }
     }
 }
 </script>
 
 <style lang="scss" scoped>
-.process {
-    height: 40px;
-
-    &:hover {
-        background-color: rgb(217, 217, 217);
-        cursor: pointer;
-    }
-}
 .fields {
     height: 500px;
 }
