@@ -1,5 +1,5 @@
 <template>
-    <div class="field mt-3 justify-around bg-main_white px-2 rounded flex items-center">
+    <div class="field mt-3 py-1 justify-around bg-main_white px-2 rounded flex items-center">
         <b class="text-sm text-main_darktext">Add field</b> 
         <font-awesome-icon icon="circle-plus" class="rounded-full icon ml-2" size="lg" />
     </div>

@@ -44,9 +44,9 @@ export default {
     methods: {
         //ENTER THE PROCESS
         setActive(hash) {
+            this.$store.dispatch('resetValues');
             let previousHash = this.$store.state.process.hash;
             let previousProcessUpdated = this.$store.state.processUpdated;
-            this.$store.state.currentWindow = "EditProcess";
             this.$store.state.processes.forEach(process => {
                 if (process.hash == previousHash)
                     process.updated = previousProcessUpdated;
@@ -59,6 +59,7 @@ export default {
                 else
                     process.active = false;
             });
+            this.$store.dispatch('updateUserStep');
         },
         //CREATE PROCCESS, IT'S NOT YET ADDED TO THE DATABASE
         async createProcess() {
@@ -74,8 +75,11 @@ export default {
                 updated: false,
                 name: "...",
                 details: "",
+                tasks: []
             };
             this.$store.state.processes.push(this.$store.state.process);
+            this.$store.state.currentWindow = 'EditProcess';
+            this.$store.dispatch('updateUserStep');
         },
     },
 }

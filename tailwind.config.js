@@ -13,6 +13,7 @@ module.exports = {
                 main_lighttext: "#A5C4C5",
                 main_green: "#50A45E",
                 main_red: "#DB392F",
+                main_cyan: "#0ED4FF",
             },
         },
     },

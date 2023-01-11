@@ -52,11 +52,13 @@ export default {
         },
         async saveProcess() {
             this.$store.state.creatingProcess = false;
+            this.$store.state.processUpdated = false;
             let hashes = [];
             this.$store.state.processes.forEach(process => {
                 hashes.push(process.hash);
                 if (process.active)
                     process = this.$store.state.process;
+                process.updated = true;
             });
             await setDoc(doc(db, "process/", this.$store.state.process.hash), {
                 hash: this.$store.state.process.hash,

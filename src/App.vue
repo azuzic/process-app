@@ -25,6 +25,39 @@ export default {
         Debug
     },
     methods: {
+        loadUserStep(lastWindow) {
+            this.$store.state.currentWindow = lastWindow;
+            let previousProcessHash = this.$store.state.process.hash;
+            let previousProcessUpdated = this.$store.state.processUpdated;
+            this.$store.state.processes.forEach(process => {
+                if (process.hash == previousProcessHash)
+                    process.updated = previousProcessUpdated;
+                if (process.hash == this.$store.state.data.lastProcess) {
+                    process.active = true;
+                    this.$store.state.processUpdated = process.updated;
+                    this.$store.state.process = process;
+                    this.$store.state.processSelected = true;
+                }
+                else
+                    process.active = false;
+            });
+            if (['EditTask', 'EditUsers'].includes(this.$store.state.data.lastWindow) && this.$store.state.data.lastTask != "") {
+                let previousTaskHash = this.$store.state.task.hash;
+                let previousTaskUpdated = this.$store.state.taskUpdated;
+                this.$store.state.process.tasks.forEach(task => {
+                    if (task.hash == previousTaskHash)
+                        task.updated = previousTaskUpdated;
+                    if (task.hash == this.$store.state.data.lastTask) {
+                        task.active = true;
+                        this.$store.state.taskUpdated = task.updated;
+                        this.$store.state.task = task;
+                        this.$store.state.taskSelected = true;
+                    }
+                    else
+                        task.active = false;
+                });
+            }
+        }
     },
     async mounted() {
         onAuthStateChanged(auth, async (user) => {
@@ -34,7 +67,11 @@ export default {
                     router.push('/main');
                 }
                 this.$store.state.data.email = user.email;
+                this.$store.state.creatingProcess = true;
                 await this.$store.dispatch('getUserData');
+                await wait(0.5);
+                this.loadUserStep(this.$store.state.data.lastWindow);
+                this.$store.state.creatingProcess = false;
             } else {
                 console.log("NO USER");
                 router.push('/');
@@ -63,31 +100,31 @@ export default {
 .vue-input {
     padding: 8px 16px 8px 16px;
     border-radius: 64px;
-    background: rgba(4, 38, 48, 0.5);
+    background: #042630;
     outline-width: 0;
     border: solid #010910 2px;
 
     &:hover {
-        background: rgba(4, 38, 48, 0.75);
+        background: rgb(4, 30, 40);
     }
 
     &:focus {
-        background: rgba(4, 38, 48, 1);
+        background: rgb(4, 20, 30);
     }
 }
 .vue-input2 {
     padding: 8px 16px 8px 16px;
     border-radius: 8px;
-    background: rgba(4, 38, 48, 0.5);
+    background: #042630;
     outline-width: 0;
     border: solid #010910 2px;
 
     &:hover {
-        background: rgba(4, 38, 48, 0.75);
+        background: rgb(4, 30, 40);
     }
 
     &:focus {
-        background: rgba(4, 38, 48, 1);
+        background: rgb(4, 20, 30);
         border-color: #50A45E;
     }
 }

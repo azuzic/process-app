@@ -12,10 +12,19 @@
 
             <!--PROCESS LIST-->
             <div>
-                <block-button @click="$store.state.currentWindow ='EditProcess'" :name="'Process'" icon="book" :selected="['EditProcess', 'ProcessDiagram', 'ProcessAnalytics', 'ProcessUsers'].includes($store.state.currentWindow)"/>
-                <block-button @click="$store.state.currentWindow = 'EditTask'" :name="'Tasks'" icon="list-check" :selected="['EditTask', 'EditUsers'].includes($store.state.currentWindow)" />
-                <block-button :name="'Conversation Session'" icon="comments" :selected="false" />
-                <block-button :name="'Event Log'" icon="bell" :selected="false" />
+                <block-button @click="!$store.state.creatingProcess ? ($store.state.currentWindow = 'EditProcess', $store.dispatch('updateUserStep')) : ''" :name="'Process'" icon="book" 
+                :selected="['EditProcess', 'ProcessDiagram', 'ProcessAnalytics', 'ProcessUsers'].includes($store.state.currentWindow)" 
+                :disabled="$store.state.creatingProcess"/>
+
+                <block-button @click="!$store.state.creatingProcess ? ($store.state.currentWindow = 'EditTask', $store.dispatch('updateUserStep')) : ''" :name="'Tasks'" icon="list-check" 
+                :selected="['EditTask', 'EditUsers'].includes($store.state.currentWindow)" 
+                :disabled="$store.state.creatingProcess"/>
+
+                <block-button :name="'Conversation Session'" icon="comments" :selected="false" 
+                :disabled="$store.state.creatingProcess"/>
+
+                <block-button :name="'Event Log'" icon="bell" :selected="false" 
+                :disabled="$store.state.creatingProcess"/>
             </div>
         </div>
     </div>
