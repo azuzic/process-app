@@ -8,10 +8,16 @@
             <edit-process v-if="$store.state.currentWindow == 'EditProcess'" class="grow" />
 
             <div v-if="['EditTask', 'TaskUsers'].includes($store.state.currentWindow)" class="flex grow">
-                <task-list />
+                <task-list /> 
                 <edit-task v-if="$store.state.currentWindow == 'EditTask' && $store.state.taskSelected" class="grow" />
                 <task-users v-if="$store.state.currentWindow == 'TaskUsers' && $store.state.taskSelected" class="grow" />
             </div>
+            
+            <div v-if="['ViewEvent', 'CreateEvent'].includes($store.state.currentWindow)" class="flex grow">
+                <log-event-categories />
+                <view-event />
+            </div>
+
         </div>
     </div>
 </template>
@@ -24,6 +30,8 @@ import EditProcess from '../components/MainWindow/Process/EditProcess.vue';
 import EditTask from '../components/MainWindow/Task/EditTask.vue';
 import TaskUsers from '../components/MainWindow/Task/TaskUsers.vue';
 import TaskList from '../components/MainWindow/Task/TaskList.vue';
+import LogEventCategories from '../components/MainWindow/EventLog/LogEventCategories.vue';
+import ViewEvent from '../components/MainWindow/EventLog/ViewEvent.vue';
 
 export default {
     name: "MainPage",
@@ -34,7 +42,9 @@ export default {
     EditProcess,
     EditTask,
     TaskList,
-    TaskUsers
+    TaskUsers,
+    LogEventCategories,
+    ViewEvent,
 },
 };
 </script>

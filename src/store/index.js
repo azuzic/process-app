@@ -6,6 +6,15 @@ export default createStore({
     state: {
         currentWindow: "none",
 
+        joinedProcess: true,
+        finishedProcess: true,
+        startedtask: true,
+        finishedtask: true,
+        openedSession: true,
+        closedSession: true,
+
+        event: "AllLogEvents",
+
         fieldSelected: false,
         creatingField: false,
         fieldUpdated: false,
@@ -30,7 +39,12 @@ export default createStore({
             hash: "",
             name: "",
             details: "",
+
             fields: [],
+
+            visibilityUsers: [],
+            editUsers: [],
+            completionUsers: [],
         },
 
         creatingProcess: false,
@@ -107,6 +121,16 @@ export default createStore({
                                 `${doc2.data().fields}` != "undefined"
                                     ? doc2.data().fields
                                     : [],
+
+                            visibilityUsers: `${doc2.data().visibilityUsers}`
+                                .split(",")
+                                .filter((i) => i),
+                            editUsers: `${doc2.data().editUsers}`
+                                .split(",")
+                                .filter((i) => i),
+                            completionUsers: `${doc2.data().completionUsers}`
+                                .split(",")
+                                .filter((i) => i),
                         };
                         task.fields.forEach((field) => {
                             field.active = false;

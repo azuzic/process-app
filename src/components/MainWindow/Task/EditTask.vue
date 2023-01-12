@@ -1,24 +1,23 @@
 <template>
-    <div class="flex">
-        <div class="bg-main_bg px-4 flex flex-col justify-between pb-3 grow overflow-y-scroll">
-            <div class="flex flex-col">
-                <b class="text-lg pl-1 mt-3 mb-1">Task Name</b>
-                <input @input="$store.state.taskUpdated ? $store.dispatch('checkUpdate2') : ''" v-model="$store.state.task.name"
-                    class="vue-input2" placeholder="Enter task name ..." type="text">
-        
-                <b class="text-lg pl-1 my-1">Details</b>
-                <textarea @input="$store.state.taskUpdated ? $store.dispatch('checkUpdate2') : ''" v-model="$store.state.task.details"
-                    class="vue-input2" placeholder="Enter details ..." type="text" rows="4"></textarea>
-        
+    <div class="flex grow">
+        <div class="bg-main_bg px-4 flex flex-col justify-between pb-3 grow">
+            <div class="flex flex-col grow">
+                <div class="flex flex-col">
+                    <b class="text-lg pl-1 mt-3 mb-1">Task Name</b>
+                    <input @input="$store.state.taskUpdated ? $store.dispatch('checkUpdate2') : ''" v-model="$store.state.task.name"
+                        class="vue-input2" placeholder="Enter task name ..." type="text">
+                    
+                    <b class="text-lg pl-1 my-1">Details</b>
+                    <textarea @input="$store.state.taskUpdated ? $store.dispatch('checkUpdate2') : ''" v-model="$store.state.task.details"
+                        class="vue-input2" placeholder="Enter details ..." type="text" rows="4"></textarea>
+                </div>
+                
                 <b class="text-lg pl-1 my-2">Fields</b>
                 <hr class="border-2 border-bg_white rounded-full mb-2" />
-                <div class="flex flex-col fields overflow-y-scroll px-4 -mx-4 overflow-x-hidden pb-4">
-                    <Field v-for="(item, index) in $store.state.task.fields" v-bind:key="index" 
-                    :hash="item.hash" 
-                    :type="item.active ? $store.state.field.type : item.type" 
-                    :isActive="item.active" 
-                    :data = "item.active ? $store.state.field.data : item.data"
-                    @click="!item.active ? setActive(item.hash) : ''"/>
+                <div class="flex flex-col overflow-y-auto px-4 -mx-4 overflow-x-hidden pb-4 h-0 grow">
+                    <Field v-for="(item, index) in $store.state.task.fields" v-bind:key="index" :hash="item.hash"
+                        :type="item.active ? $store.state.field.type : item.type" :isActive="item.active"
+                        :data="item.active ? $store.state.field.data : item.data" @click="!item.active ? setActive(item.hash) : ''" />
                     <AddFieldButton @click="fieldSelected = true, createField()" class="w-fit" />
                 </div>
             </div>
@@ -89,10 +88,8 @@ export default {
         },  
     }
 }
-</script>
 
-<style lang="scss" scoped>
-.fields {
-    height: 500px;
-}
-</style>
+/**
+
+*/
+</script>

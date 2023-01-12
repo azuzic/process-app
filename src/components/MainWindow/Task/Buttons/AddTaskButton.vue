@@ -1,5 +1,5 @@
 <template>
-    <div :class="!$store.state.creatingTask ? 'field' : 'disabled'"  class="mt-3 justify-between bg-main_white px-2 rounded flex items-center">
+    <div :class="!$store.state.creatingTask ? 'field' : 'disabled'"  class="mt-3 justify-between bg-main_white py-4 px-2 rounded flex items-center">
         <b class="text-lg text-main_darktext">Add new task</b>
         <font-awesome-icon icon="circle-plus" class="rounded-full icon ml-2" size="2xl" />
     </div>

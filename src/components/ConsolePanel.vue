@@ -12,18 +12,28 @@
 
             <!--PROCESS LIST-->
             <div>
-                <block-button @click="!$store.state.creatingProcess ? ($store.state.currentWindow = 'EditProcess', $store.dispatch('updateUserStep')) : ''" :name="'Process'" icon="book" 
+                <block-button @click="!$store.state.creatingProcess ? ($store.state.currentWindow = 'EditProcess', $store.dispatch('updateUserStep')) : ''" 
+                :name="'Process'" 
+                :icon="'book'" 
                 :selected="['EditProcess', 'ProcessDiagram', 'ProcessAnalytics', 'ProcessUsers'].includes($store.state.currentWindow)" 
                 :disabled="$store.state.creatingProcess"/>
 
-                <block-button @click="!$store.state.creatingProcess ? ($store.state.currentWindow = 'EditTask', $store.dispatch('updateUserStep')) : ''" :name="'Tasks'" icon="list-check" 
+                <block-button @click="!$store.state.creatingProcess ? ($store.state.currentWindow = 'EditTask', $store.dispatch('updateUserStep')) : ''" 
+                :name="'Tasks'" 
+                :icon="'list-check'" 
                 :selected="['EditTask', 'TaskUsers'].includes($store.state.currentWindow)" 
                 :disabled="$store.state.creatingProcess"/>
 
-                <block-button :name="'Conversation Session'" icon="comments" :selected="false" 
+                <block-button 
+                :name="'Conversation Session'" 
+                :icon="'comments'" 
+                :selected="false" 
                 :disabled="$store.state.creatingProcess"/>
 
-                <block-button :name="'Event Log'" icon="bell" :selected="false" 
+                <block-button @click="!$store.state.creatingProcess ? ($store.state.currentWindow = 'ViewEvent', $store.dispatch('updateUserStep')) : ''"  
+                :name="'Event Log'" 
+                :icon="'bell'" 
+                :selected="['ViewEvent', 'CreateEvent'].includes($store.state.currentWindow)" 
                 :disabled="$store.state.creatingProcess"/>
             </div>
         </div>

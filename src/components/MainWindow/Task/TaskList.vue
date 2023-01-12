@@ -1,16 +1,16 @@
 <template>
-    <div class="w-60 bg-main_darktext flex flex-col p-4">
-        <div class="text-lg font-bold"> Tasks </div>
-        <hr class="border-2 border-bg_main_white rounded-full my-2">
-        <TaskButton v-for="(item, index) in $store.state.process.tasks" v-bind:key="index" 
-
-            :taskActive="item.active"
-            :taskUpdated="item.updated"
-            :name="item.active ? $store.state.task.name : item.name"
-
-            @click="!this.$store.state.creatingTask ? setActive(item.hash) : ''" />
-
-        <AddTaskButton @click="!$store.state.creatingTask ? createTask() : ''" />
+    <div class="w-60 bg-main_darktext flex flex-col py-4">
+        <div class="flex flex-col px-4">
+            <div class="text-lg font-bold"> Tasks </div>
+            <hr class="border-2 border-bg_main_white rounded-full my-2">
+        </div>
+        <div class="flex flex-col overflow-y-auto overflow-x-hidden h-0 grow px-4">
+            <TaskButton v-for="(item, index) in $store.state.process.tasks" v-bind:key="index" :taskActive="item.active"
+                :taskUpdated="item.updated" :name="item.active ? $store.state.task.name : item.name"
+                @click="!this.$store.state.creatingTask ? setActive(item.hash) : ''" />
+            
+            <AddTaskButton @click="!$store.state.creatingTask ? createTask() : ''" />
+        </div>
     </div>  
 </template>
 
@@ -25,7 +25,6 @@ export default {
         AddTaskButton
     },
     methods: {
-        //ENTER THE PROCESS
         setActive(hash) {
             let previousHash = this.$store.state.task.hash;
             let previousTaskUpdated = this.$store.state.taskUpdated;
@@ -60,7 +59,10 @@ export default {
                 updated: false,
                 name: "...",
                 details: "",
-                fields: []
+                fields: [],
+                visibilityUsers: [],
+                editUsers: [],
+                completionUsers: [],
             };
             this.$store.state.process.tasks.push(this.$store.state.task);
             this.$store.dispatch('updateUserStep');

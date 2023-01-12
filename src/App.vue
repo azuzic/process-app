@@ -131,16 +131,16 @@ export default {
 .vue-select {
     padding: 8px 16px 8px 16px;
     border-radius: 8px;
-    background: rgba(4, 38, 48, 0.5);
     outline-width: 0;
+    background: rgba(4, 38, 48, 0.75);
     border: solid #010910 2px;
 
     &:hover {
-        background: rgba(4, 38, 48, 0.75);
+        background: rgba(4, 38, 48, 0.5);
     }
 
     &:focus {
-        background: rgba(4, 38, 48, 1);
+        background: rgba(0, 18, 28, 1);
         border-color: #50A45E;
     }
 }
