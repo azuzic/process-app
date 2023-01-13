@@ -6,12 +6,19 @@ export default createStore({
     state: {
         currentWindow: "none",
 
-        joinedProcess: true,
-        finishedProcess: true,
-        startedtask: true,
-        finishedtask: true,
-        openedSession: true,
-        closedSession: true,
+        eventLogUser: "",
+        eventLogTask: "None",
+        eventLog: {
+            joinedProcess: true,
+            finishedProcess: true,
+            createdTask: true,
+            startedTask: true,
+            updatedTask: true,
+            finishedTask: true,
+            deletedTask: true,
+            openedSession: true,
+            closedSession: true,
+        },
 
         event: "AllLogEvents",
 
@@ -59,6 +66,7 @@ export default createStore({
             name: "...",
             details: "",
             tasks: [],
+            eventLog: {},
         },
         processes: [],
 
@@ -106,6 +114,10 @@ export default createStore({
                         name: `${doc.data().name}`,
                         details: `${doc.data().details}`,
                         tasks: [],
+                        eventLog:
+                            `${doc.data().eventLog}` != "undefined"
+                                ? doc.data().eventLog
+                                : {},
                     };
                     const querySnapshot3 = await getDocs(
                         collection(db, "process/" + `${doc.id}` + "/tasks")

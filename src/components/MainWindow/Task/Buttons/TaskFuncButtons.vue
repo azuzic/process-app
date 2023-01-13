@@ -23,6 +23,7 @@ export default {
                 this.$store.state.taskSelected = false;
             }
             await deleteDoc(doc(db, "process/" + this.$store.state.process.hash + "/tasks/", hash));
+            await this.logEvent(" deleted task ");
         },
         async saveTask() {
             this.$store.state.creatingTask = false;
@@ -47,7 +48,8 @@ export default {
                 editUsers: this.$store.state.task.editUsers,
                 completionUsers: this.$store.state.task.completionUsers,
             });
-        },
+            await this.logEvent(" created task ");
+        }, 
         async updateTask() {
             this.$store.state.fieldSelected = false;
             this.$store.state.taskUpdated = true;
@@ -84,6 +86,27 @@ export default {
                 visibilityUsers: this.$store.state.task.visibilityUsers,
                 editUsers: this.$store.state.task.editUsers,
                 completionUsers: this.$store.state.task.completionUsers,
+            });
+            await this.logEvent(" updated task ");
+        },
+        async logEvent(event) {
+            if (this.$store.state.process.eventLog == undefined)
+                this.$store.state.process['eventLog'] = {};
+
+            let date = new Date().toISOString().replace('-', '/').split('T')[0].replace('-', '/');
+
+            if (this.$store.state.process.eventLog[date] == undefined)
+                this.$store.state.process.eventLog[date] = [];
+
+            this.$store.state.process.eventLog[date].unshift({
+                who: this.$store.state.data.username,
+                did: event,
+                what: this.$store.state.task.name,
+            });
+
+            let updateRef = doc(db, "process/", this.$store.state.process.hash);
+            await updateDoc(updateRef, {
+                eventLog: this.$store.state.process.eventLog,
             });
         }
     }

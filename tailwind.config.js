@@ -14,6 +14,7 @@ module.exports = {
                 main_green: "#50A45E",
                 main_red: "#DB392F",
                 main_cyan: "#0ED4FF",
+                main_weakcyan: "#76C9C9",
             },
         },
     },

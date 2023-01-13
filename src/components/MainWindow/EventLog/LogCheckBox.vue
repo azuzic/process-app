@@ -23,15 +23,8 @@ export default {
     },
     methods: {
         change() {
-            switch (this.label) {
-                case 'Joined process': this.$store.state.joinedProcess = this.value; break;
-                case 'Finished process': this.$store.state.finishedProcess = this.value; break;
-                case 'Started task': this.$store.state.startedtask = this.value; break;
-                case 'Finished task': this.$store.state.finishedtask = this.value; break;
-                case 'Opened session': this.$store.state.openedSession = this.value; break;
-                case 'Closed session': this.$store.state.closedSession = this.value; break;
-                default: break;
-            }
+            let a = this.label.split(' ')[0].toLowerCase() + this.label.split(' ')[1].replace(/^\w/, c => c.toUpperCase());
+            this.$store.state.eventLog[a] = this.value;
         }
     }
 }
