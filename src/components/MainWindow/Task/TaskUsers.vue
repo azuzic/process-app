@@ -4,36 +4,37 @@
 
             <b class="text-lg pl-1 mt-3 mb-1">Task visibility</b>
 
-            <div class="vue-labelInput flex itmes-center overflow-x-auto w-0 min-w-full px-4">
-                <div class="flex items-center">
-                    <Chip v-for="(item, index) in $store.state.task.visibilityUsers" v-bind:key="index" :name="item" class="mr-2" 
-                    :array="$store.state.task.visibilityUsers" :index="index"/>
-                </div>
-                <input @input="updateVisibilityChips()" v-model="visibilityChip" class="chipInput py-2 bg-transparent outline-none" type="text"> 
+            <div class="vue-labelInput flex items-center overflow-x-auto w-0 min-w-full px-4">
+                <Chip v-for="(item, index) in $store.state.task.visibilityUsers" v-bind:key="index" :name="item" class="mr-2" 
+                    :array="$store.state.task.visibilityUsers" :index="index" :type="'TaskVisibility'" />
+                <input list="visibilityChip" @input="updateVisibilityChips()" v-model="visibilityChip" class="chipInput py-2 bg-transparent outline-none" type="text"> 
+                <datalist id="visibilityChip">
+                    <option v-for="(item, index) in array(1)" v-bind:key="index" :value="item"/>
+                </datalist>
             </div>
 
             <b class="text-lg pl-1 mt-3 mb-1">Task edit</b>
             
-            <div class="vue-labelInput flex itmes-center overflow-x-auto w-0 min-w-full px-4">
-                <div class="flex items-center">
-                    <Chip v-for="(item, index) in $store.state.task.editUsers" v-bind:key="index" :name="item" class="mr-2"
-                        :array="$store.state.task.editUsers" :index="index" />
-                </div>
-                <input @input="updateEditChips()" v-model="editChip" class="chipInput py-2 bg-transparent outline-none"
-                    type="text">
+            <div class="vue-labelInput flex items-center overflow-x-auto w-0 min-w-full px-4">
+                <Chip v-for="(item, index) in $store.state.task.editUsers" v-bind:key="index" :name="item" class="mr-2"
+                    :array="$store.state.task.editUsers" :index="index" :type="'TaskEdit'" />
+                <input list="editChip" @input="updateEditChips()" v-model="editChip" class="chipInput py-2 bg-transparent outline-none" type="text">
+                <datalist id="editChip">
+                    <option v-for="(item, index) in array(2)" v-bind:key="index" :value="item"/>
+                </datalist>
             </div>
 
             <b class="text-lg pl-1 mt-3 mb-1">Task completion</b>
             
-            <div class="vue-labelInput flex itmes-center overflow-x-auto w-0 min-w-full px-4">
-                <div class="flex items-center">
-                    <Chip v-for="(item, index) in $store.state.task.completionUsers" v-bind:key="index" :name="item" class="mr-2"
-                        :array="$store.state.task.completionUsers" :index="index" />
-                </div>
-                <input @input="updateCompletionChips()" v-model="completionChip" class="chipInput py-2 bg-transparent outline-none"
-                    type="text">
+            <div class="vue-labelInput flex items-center overflow-x-auto w-0 min-w-full px-4">
+                <Chip v-for="(item, index) in $store.state.task.completionUsers" v-bind:key="index" :name="item" class="mr-2"
+                    :array="$store.state.task.completionUsers" :index="index" :type="'TaskCompletion'" />
+                <input list="completionChip" @input="updateCompletionChips()" v-model="completionChip" class="chipInput py-2 bg-transparent outline-none" type="text">
+                <datalist id="completionChip">
+                    <option v-for="(item, index) in array(3)" v-bind:key="index" :value="item"/>
+                </datalist>
             </div>
-
+            
             <br>
         </div>
         <TaskFuncButtons />
@@ -41,7 +42,7 @@
 </template>
 
 <script>
-import Chip from './Buttons/Chip.vue';
+import Chip from '../../Other/Chip.vue';
 import TaskFuncButtons from "./Buttons/TaskFuncButtons.vue";
 export default {
     name: "TaskUsers",
@@ -59,41 +60,71 @@ export default {
     methods: {
         updateVisibilityChips() {
             if (this.visibilityChip.includes(",")) {
-                let newChip = this.visibilityChip.split(",")[0];
+                let newChip = this.visibilityChip.split(",")[0].trim();
 
                 if (this.$store.state.task.visibilityUsers == undefined)
                     this.$store.state.task.visibilityUsers = [];
 
-                this.$store.dispatch('checkUpdate2');
+                if (!this.$store.state.task.visibilityUsers.includes(newChip)) {
 
-                if (newChip != "") this.$store.state.task.visibilityUsers.push(newChip);
-                this.visibilityChip = this.visibilityChip.split(",").slice(1).join(",").trim();
+                    this.$store.dispatch('checkUpdate2');
+
+                    if (newChip != "") this.$store.state.task.visibilityUsers.push(newChip);
+                    this.visibilityChip = this.visibilityChip.split(",").slice(1).join(",").trim();
+                }
+                else this.visibilityChip = newChip;
             }
         },
         updateEditChips() {
             if (this.editChip.includes(",")) {
-                let newChip = this.editChip.split(",")[0];
+                let newChip = this.editChip.split(",")[0].trim();
 
                 if (this.$store.state.task.editUsers == undefined)
                     this.$store.state.task.editUsers = [];
 
-                this.$store.dispatch('checkUpdate2');
+                if (!this.$store.state.task.editUsers.includes(newChip)) {
 
-                if (newChip != "") this.$store.state.task.editUsers.push(newChip);
-                this.editChip = this.editChip.split(",").slice(1).join(",").trim();
+                    this.$store.dispatch('checkUpdate2');
+
+                    if (newChip != "") this.$store.state.task.editUsers.push(newChip);
+                    this.editChip = this.editChip.split(",").slice(1).join(",").trim();
+                }
+                else this.editChip = newChip;
             }
         },
         updateCompletionChips() {
             if (this.completionChip.includes(",")) {
-                let newChip = this.completionChip.split(",")[0];
+                let newChip = this.completionChip.split(",")[0].trim();
 
-                if (this.$store.state.task.completionUsers == undefined)
-                    this.$store.state.task.completionUsers = [];
+                if (this.$store.state.task.completionChip == undefined)
+                    this.$store.state.task.completionChip = [];
 
-                this.$store.dispatch('checkUpdate2');
+                if (!this.$store.state.task.completionChip.includes(newChip)) {
 
-                if (newChip != "") this.$store.state.task.completionUsers.push(newChip);
-                this.completionChip = this.completionChip.split(",").slice(1).join(",").trim();
+                    this.$store.dispatch('checkUpdate2');
+
+                    if (newChip != "") this.$store.state.task.completionUsers.push(newChip);
+                    this.completionChip = this.completionChip.split(",").slice(1).join(",").trim();
+                }
+                else this.completionChip = newChip;
+            }
+        },
+        array(a) {
+            switch (a) {
+                case 1:
+                    return [...new Set(this.$store.state.task.editUsers
+                        .concat(this.$store.state.task.completionUsers)
+                        .filter(n => !this.$store.state.task.visibilityUsers.includes(n)))];
+                case 2:
+                    return [...new Set(this.$store.state.task.visibilityUsers
+                        .concat(this.$store.state.task.completionUsers)
+                        .filter(n => !this.$store.state.task.editUsers.includes(n)))];
+                case 3:
+                    return [...new Set(this.$store.state.task.editUsers
+                        .concat(this.$store.state.task.visibilityUsers)
+                        .filter(n => !this.$store.state.task.completionUsers.includes(n)))];
+                default:
+                    break;
             }
         }
     }

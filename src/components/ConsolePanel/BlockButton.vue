@@ -1,7 +1,7 @@
 <template>
-    <div :class="selected ? 'bg-main_bg underline' : disabled ? 'bg-main_darkblue' : 'bg-main_darkblue hover:bg-main_bg hover:cursor-pointer'" class="process flex justify-between mt-4 pl-5 pr-3 rounded items-center">
-        <b class="text-xl text-main_lighttext"> {{ name }} </b>
-        <font-awesome-icon :icon="icon" class="rounded-full icon2" size="2xl" />
+    <div :class="!disabled ? selected ? 'bg-main_bg underline' : 'hover:bg-main_bg hover:cursor-pointer bg-main_darkblue' : selected ? 'bg-main_bg underline' : 'opacity-30 bg-main_darkblue'" class="process flex justify-between mt-4 pl-5 pr-3 rounded items-center">
+        <b :class="disabled ? selected ? '' : 'opacity-40' : ''" class="text-xl text-main_lighttext"> {{ name }} </b>
+        <font-awesome-icon :icon="icon" class="rounded-full icon2" :class="disabled ? selected ? '' : 'opacity-40' : ''" size="2xl" />
     </div>
 </template>
 

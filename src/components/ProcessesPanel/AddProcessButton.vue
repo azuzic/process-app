@@ -1,6 +1,6 @@
 <template>
     <div :class="!$store.state.creatingProcess ? 'process' : 'disabled'" class="mt-3 justify-around bg-main_white px-2 rounded flex items-center">
-        <b class="text-xl text-main_darktext">Create process</b> 
+        <b class="text-lg text-main_darktext">Create process</b> 
         <font-awesome-icon icon="circle-plus" class="rounded-full icon" size="2xl" />
     </div>
 </template>

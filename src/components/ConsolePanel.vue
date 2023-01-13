@@ -28,7 +28,7 @@
                 :name="'Conversation Session'" 
                 :icon="'comments'" 
                 :selected="false" 
-                :disabled="$store.state.creatingProcess"/>
+                :disabled="true"/>
 
                 <block-button @click="!$store.state.creatingProcess ? ($store.state.currentWindow = 'ViewEvent', $store.dispatch('updateUserStep')) : ''"  
                 :name="'Event Log'" 
@@ -54,7 +54,8 @@ export default {
 
 <style lang="scss" scoped>
 .processesPanel {
-    width: 360px;
+    min-width: 300px;
+    width: 300px;
     padding: 8px 38px 8px 38px;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <div class="w-60 bg-main_darktext flex flex-col py-4">
+    <div class="w-52 bg-main_darktext flex flex-col py-4">
         <div class="flex flex-col px-4">
             <div class="text-lg font-bold"> Tasks </div>
             <hr class="border-2 border-bg_main_white rounded-full my-2">
@@ -55,14 +55,15 @@ export default {
             });
             this.$store.state.task = {
                 hash: cryptoRandomString({ length: 32, type: 'url-safe' }),
+                creationTime: new Date().getTime(),
                 active: true,
                 updated: false,
                 name: "...",
                 details: "",
                 fields: [],
-                visibilityUsers: [],
-                editUsers: [],
-                completionUsers: [],
+                visibilityUsers: ["ADMIN", "USER"],
+                editUsers: ["ADMIN"],
+                completionUsers: ["USER"],
             };
             this.$store.state.process.tasks.push(this.$store.state.task);
             this.$store.dispatch('updateUserStep');

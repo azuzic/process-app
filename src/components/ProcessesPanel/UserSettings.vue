@@ -4,7 +4,7 @@
         <div class="flex">
             <img src="https://picsum.photos/200" width="43" height="43" class="rounded-full">
             <div class="flex flex-col-reverse ml-2">
-                <Label :name="'Admin'" />
+                <Label :name="usertag()" />
                 <div class="text-main_lighttext font-bold mb-1">
                     {{ $store.state.data.username }}
                 </div>
@@ -47,6 +47,14 @@ export default {
                     console.error("Signed out error!");
                 });
         },
+        usertag() {
+            let tag = "";
+            this.$store.state.process.users.forEach(user => {
+                if (user.name == this.$store.state.data.username)
+                    tag = user.tag;
+            });
+            return tag;
+        }
     }
 }
 </script>

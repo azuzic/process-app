@@ -24,41 +24,6 @@ export default {
     components: {
         Debug
     },
-    methods: {
-        loadUserStep(lastWindow) {
-            this.$store.state.currentWindow = lastWindow;
-            let previousProcessHash = this.$store.state.process.hash;
-            let previousProcessUpdated = this.$store.state.processUpdated;
-            this.$store.state.processes.forEach(process => {
-                if (process.hash == previousProcessHash)
-                    process.updated = previousProcessUpdated;
-                if (process.hash == this.$store.state.data.lastProcess) {
-                    process.active = true;
-                    this.$store.state.processUpdated = process.updated;
-                    this.$store.state.process = process;
-                    this.$store.state.processSelected = true;
-                }
-                else
-                    process.active = false;
-            });
-            if (['EditTask', 'TaskUsers'].includes(this.$store.state.data.lastWindow) && this.$store.state.data.lastTask != "") {
-                let previousTaskHash = this.$store.state.task.hash;
-                let previousTaskUpdated = this.$store.state.taskUpdated;
-                this.$store.state.process.tasks.forEach(task => {
-                    if (task.hash == previousTaskHash)
-                        task.updated = previousTaskUpdated;
-                    if (task.hash == this.$store.state.data.lastTask) {
-                        task.active = true;
-                        this.$store.state.taskUpdated = task.updated;
-                        this.$store.state.task = task;
-                        this.$store.state.taskSelected = true;
-                    }
-                    else
-                        task.active = false;
-                });
-            }
-        }
-    },
     async mounted() {
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -68,9 +33,10 @@ export default {
                 }
                 this.$store.state.data.email = user.email;
                 this.$store.state.creatingProcess = true;
+                await wait(0.5);
                 await this.$store.dispatch('getUserData');
                 await wait(0.5);
-                this.loadUserStep(this.$store.state.data.lastWindow);
+                await this.$store.dispatch('loadUserStep');
                 this.$store.state.creatingProcess = false;
             } else {
                 console.log("NO USER");
@@ -151,6 +117,15 @@ export default {
     -webkit-line-clamp: 2;
     /* number of lines to show */
     line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+.text3 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    /* number of lines to show */
+    line-clamp: 3;
     -webkit-box-orient: vertical;
 }
 </style>

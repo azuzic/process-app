@@ -5,11 +5,11 @@
                 <div class="flex flex-col">
                     <b class="text-lg pl-1 mt-3 mb-1">Task Name</b>
                     <input @input="$store.state.taskUpdated ? $store.dispatch('checkUpdate2') : ''" v-model="$store.state.task.name"
-                        class="vue-input2" placeholder="Enter task name ..." type="text">
+                        class="vue-input2 text-sm" placeholder="Enter task name ..." type="text">
                     
                     <b class="text-lg pl-1 my-1">Details</b>
                     <textarea @input="$store.state.taskUpdated ? $store.dispatch('checkUpdate2') : ''" v-model="$store.state.task.details"
-                        class="vue-input2" placeholder="Enter details ..." type="text" rows="4"></textarea>
+                        class="vue-input2 text-sm" placeholder="Enter details ..." type="text" rows="4"></textarea>
                 </div>
                 
                 <b class="text-lg pl-1 my-2">Fields</b>

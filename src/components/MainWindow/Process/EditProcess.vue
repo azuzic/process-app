@@ -1,89 +1,38 @@
 <template>
-    <div class="bg-main_bg px-4 flex flex-col justify-between pb-3">
+    <div class="bg-main_bg px-4 flex flex-col pb-3">
 
-        <div class="flex flex-col">
+        <div class="flex flex-col h-full">
             <b class="text-lg pl-1 mt-3 mb-1">Process Name</b>
-            <input @input="$store.state.processUpdated ? $store.dispatch('checkUpdate') : ''" v-model="$store.state.process.name" class="vue-input2" placeholder="Enter process name ..." type="text">
+            <input @input="$store.state.processUpdated ? $store.dispatch('checkUpdate') : ''" v-model="$store.state.process.name" class="vue-input2 text-sm" placeholder="Enter process name ..." type="text">
             
             <b class="text-lg pl-1 my-1">Details</b>
-            <textarea @input="$store.state.processUpdated ? $store.dispatch('checkUpdate') : ''" v-model="$store.state.process.details" class="vue-input2" placeholder="Enter details ..." type="text" rows="4"></textarea>
+            <textarea @input="$store.state.processUpdated ? $store.dispatch('checkUpdate') : ''" v-model="$store.state.process.details" class="vue-input2 text-sm" placeholder="Enter details ..." type="text" rows="10"></textarea>
             
             <b class="text-lg pl-1 my-1">Tasks</b>
-            <div class="text-sm pl-4 pt-2 text-main_lighttext">
-                Empty ...
+            <div class="text-sm pl-4 text-main_lighttext h-full flex flex-col">
+                <div v-if="$store.state.process.tasks.length > 0" class="flex flex-wrap py-4 overflow-y-auto overflow-x-hidden h-0 grow w-full"> 
+                    <div class="flex flex-wrap h-fit">
+                        <ProcessTaskBtn v-for="(item, index) in $store.state.process.tasks" v-bind:key="index" :name="item.name" :index="index" :selected="false"/>
+                    </div>
+                </div>
+                <div v-else>
+                    Empty ...
+                </div> <!--overflow-x-auto w-0 min-w-full-->
             </div>
         </div>
         
-        <div class="flex">
-            <div @click="$store.state.creatingProcess ? saveProcess() : updateProcess()" class="process justify-around bg-main_green px-4 rounded flex items-center">
-                <b class="text-lg text-main_darktext">{{ $store.state.creatingProcess ? 'Save process' : 'Update process'}}</b>
-            </div>
-            <div @click="deleteProcess()" class="process ml-4 justify-around bg-main_red px-4 rounded flex items-center">
-                <b class="text-lg text-main_darktext">Delete process</b>
-            </div>
-        </div>
-
+        <ProcessFuncButtons />
     </div>
 </template>
 
 <script>
-import { doc, db, setDoc, updateDoc, deleteDoc } from "@/firebase";
+import ProcessFuncButtons from "./Buttons/ProcessFuncButtons.vue"
+import ProcessTaskBtn from "./Buttons/ProcessTaskBtn.vue"
 export default {
     name: "EditProcess",
-    methods: {
-        async deleteProcess() {
-            var index = this.$store.state.processes.map(e => e.active).indexOf(true);
-            let hash = this.$store.state.processes[index].hash;
-            if (index > -1) {
-                this.$store.state.processes.splice(index, 1);
-                this.$store.state.creatingProcess = false;
-                this.$store.state.processSelected = false;
-            }
-            await deleteDoc(doc(db, "process/", hash));
-
-            let hashes = [];
-            this.$store.state.processes.forEach(process => {
-                hashes.push(process.hash);
-            });
-            let updateRef = doc(db, "users/", this.$store.state.data.id);
-            await updateDoc(updateRef, {
-                processes: hashes
-            });
-            this.$store.dispatch('resetValues');
-            this.$store.dispatch('updateUserStep');
-        },
-        async saveProcess() {
-            this.$store.state.creatingProcess = false;
-            this.$store.state.processUpdated = false;
-            let hashes = [];
-            this.$store.state.processes.forEach(process => {
-                hashes.push(process.hash);
-                if (process.active)
-                    process = this.$store.state.process;
-                process.updated = true;
-            });
-            await setDoc(doc(db, "process/", this.$store.state.process.hash), {
-                hash: this.$store.state.process.hash,
-                name: this.$store.state.process.name,
-                details: this.$store.state.process.details,
-            });
-            let updateRef = doc(db, "users/", this.$store.state.data.id);
-            await updateDoc(updateRef, {
-                processes: hashes
-            });
-        },
-        async updateProcess() {
-            this.$store.state.processUpdated = true;
-            this.$store.state.processes.forEach(process => {
-                if (process.hash == this.$store.state.process.hash)
-                    process.updated = true;
-            });
-            let updateRef = doc(db, "process/", this.$store.state.process.hash);
-            await updateDoc(updateRef, {
-                name: this.$store.state.process.name,
-                details: this.$store.state.process.details,
-            });
-        }
+    components: {
+        ProcessFuncButtons,
+        ProcessTaskBtn
     }
 }
 </script>

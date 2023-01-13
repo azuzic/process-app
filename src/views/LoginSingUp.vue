@@ -99,6 +99,10 @@ export default {
                             const docRef = await addDoc(collection(db, "users"), {
                                 username: this.username,
                                 email: this.email,
+                                processes: [],
+                                lastProcess: "",
+                                lastTask: "",
+                                lastWindow: "",
                             });
                             this.$router.push('/main');
                             console.log("Document written with ID: ", docRef.id);

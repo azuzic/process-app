@@ -40,6 +40,7 @@ export default {
                 }
             });
             await setDoc(doc(db, "process/" + this.$store.state.process.hash + "/tasks/", this.$store.state.task.hash), {
+                creationTime: this.$store.state.task.creationTime,
                 hash: this.$store.state.task.hash,
                 name: this.$store.state.task.name,
                 details: this.$store.state.task.details,
@@ -80,6 +81,7 @@ export default {
                 }
             });
             await updateDoc(updateRef, {
+                creationTime: this.$store.state.task.creationTime,
                 name: this.$store.state.task.name,
                 details: this.$store.state.task.details,
                 fields: this.$store.state.task.fields,

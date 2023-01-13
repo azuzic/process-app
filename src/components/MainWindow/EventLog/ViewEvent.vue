@@ -1,7 +1,7 @@
 <template>
     <div class="flex grow">
-        <div class="bg-main_bg px-4 flex flex-col pb-3 grow">
-            <div class="overflow-x-hidden flex flex-col-reverse overflow-y-auto h-0 grow">
+        <div class="bg-main_bg flex flex-col pb-3 grow">
+            <div class="overflow-x-hidden flex flex-col-reverse px-4 overflow-y-auto h-0 grow">
                 <Log v-for="(item, index) in eventLogSorted" v-bind:key="index" :log="item[1]" :index="item[0]" />
             </div>
         </div>

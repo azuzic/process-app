@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col mr-4">
-        <div class="text-center font-bold px-4 py-1" :class="!selected ? !disabled ? 'hover:cursor-pointer hover:text-main_green' : '' : ''">
+        <div class="text-center font-bold px-4 py-1" :class="!selected ? !disabled ? 'hover:cursor-pointer hover:text-main_green' : 'text-main_grey' : ''">
             <slot></slot>
         </div>
         <hr v-if="selected" class="border-main_white border-2 rounded-full">

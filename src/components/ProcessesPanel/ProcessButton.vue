@@ -1,6 +1,6 @@
 <template>
-    <div :class="processActive ? 'selected' : !$store.state.creatingTask ? 'btn' : ''" class="process mt-3 bg-main_darktext  px-2 rounded flex items-center relative">
-        <b :class="processActive ? 'animate-pulse' : ''" class="text-xl text-main_lighttext text"> {{ name }} </b>
+    <div :class="processActive ? 'selected' : !$store.state.creatingTask ? 'btn' : ''" class="process mt-3 bg-main_darktext px-2 rounded flex items-center relative">
+        <b :class="processActive ? 'animate-pulse' : ''" class="text-lg text-main_lighttext text"> {{ name }} </b>
         <span v-if="!processUpdated" class="flex h-3 w-3 absolute -top-1 -right-1 ">
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
             <span class="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>

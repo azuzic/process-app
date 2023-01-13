@@ -16,6 +16,18 @@ module.exports = {
                 main_cyan: "#0ED4FF",
                 main_weakcyan: "#76C9C9",
             },
+            borderWidth: {
+                1.5: "1.5px",
+                2.5: "2.5px",
+                3: "3px",
+                3.5: "3.5px",
+            },
+            fontSize: {
+                "2xs": "0.7rem",
+                "3xs": "0.6rem",
+                "4xs": "0.5rem",
+                "5xs": "0.3rem",
+            },
         },
     },
     variants: {

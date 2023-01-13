@@ -1,6 +1,6 @@
 <template>
     <div :class="!$store.state.creatingTask ? 'field' : 'disabled'"  class="mt-3 justify-between bg-main_white py-4 px-2 rounded flex items-center">
-        <b class="text-lg text-main_darktext">Add new task</b>
+        <b class="text-base text-main_darktext">Add new task</b>
         <font-awesome-icon icon="circle-plus" class="rounded-full icon ml-2" size="2xl" />
     </div>
 </template>
@@ -15,7 +15,7 @@ export default {
 
 <style lang="scss" scoped>
 .field {
-    height: 48px;
+    height: 55px;
 
     &:hover {
         background-color: rgb(4, 20, 33);

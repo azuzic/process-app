@@ -32,6 +32,12 @@ import UserSettings from './ProcessesPanel/UserSettings.vue';
 import ProcessButton from './ProcessesPanel/ProcessButton.vue';
 import cryptoRandomString from 'crypto-random-string';
 
+let wait = function (seconds) {
+    return new Promise((resolveFn) => {
+        setTimeout(resolveFn, seconds * 1000);
+    });
+};
+
 export default {
     components: { AddProcessButton, Label, UserSettings, ProcessButton },
     name: 'ProcessesPanel',
@@ -76,19 +82,31 @@ export default {
                 updated: false,
                 name: "...",
                 details: "",
-                tasks: []
+                tasks: [],
+                eventLog: {},
+                visibilityUsers: ["ADMIN", "USER"],
+                editUsers: ["ADMIN"],
+                completionUsers: ["ADMIN", "USER"],
+                users: [
+                    { name: this.$store.state.data.username, tag: "ADMIN" }
+                ],
             };
             this.$store.state.processes.push(this.$store.state.process);
             this.$store.state.currentWindow = 'EditProcess';
             this.$store.dispatch('updateUserStep');
         },
     },
+    async mounted() {
+        this.$store.state.currentWindow = "none";
+        this.$store.state.processes = [];
+    }
 }
 
 </script>
 
 <style lang="scss" scoped>
 .processesPanel {
+    min-width: 223px;
     width: 223px;
 }
 </style>

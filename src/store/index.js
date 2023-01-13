@@ -43,6 +43,7 @@ export default createStore({
             active: false,
             updated: true,
 
+            creationTime: 0,
             hash: "",
             name: "",
             details: "",
@@ -67,6 +68,11 @@ export default createStore({
             details: "",
             tasks: [],
             eventLog: {},
+
+            visibilityUsers: [],
+            editUsers: [],
+            completionUsers: [],
+            users: [],
         },
         processes: [],
 
@@ -79,12 +85,23 @@ export default createStore({
             lastTask: "",
             lastWindow: "",
         },
+
+        allUsers: [],
+        userToAdd: {
+            username: "",
+            id: "",
+        },
     },
     mutations: {},
     actions: {
         async getUserData({ commit, state }) {
             const querySnapshot = await getDocs(collection(db, "users"));
+            this.state.allUsers = [];
             querySnapshot.forEach((doc) => {
+                this.state.allUsers.push({
+                    username: `${doc.data().username}`,
+                    id: `${doc.id}`,
+                });
                 if (this.state.data.email === `${doc.data().email}`) {
                     this.state.data.email = `${doc.data().email}`;
                     this.state.data.username = `${doc.data().username}`;
@@ -118,12 +135,29 @@ export default createStore({
                             `${doc.data().eventLog}` != "undefined"
                                 ? doc.data().eventLog
                                 : {},
+                        visibilityUsers:
+                            `${doc.data().visibilityUsers}` != "undefined"
+                                ? doc.data().visibilityUsers
+                                : [],
+                        editUsers:
+                            `${doc.data().editUsers}` != "undefined"
+                                ? doc.data().editUsers
+                                : [],
+                        completionUsers:
+                            `${doc.data().completionUsers}` != "undefined"
+                                ? doc.data().completionUsers
+                                : [],
+                        users:
+                            `${doc.data().users}` != "undefined"
+                                ? doc.data().users
+                                : [],
                     };
                     const querySnapshot3 = await getDocs(
                         collection(db, "process/" + `${doc.id}` + "/tasks")
                     );
                     querySnapshot3.forEach(async (doc2) => {
                         let task = {
+                            creationTime: `${doc2.data().creationTime}`,
                             hash: `${doc2.data().hash}`,
                             active: false,
                             updated: true,
@@ -149,6 +183,9 @@ export default createStore({
                             field.updated = true;
                         });
                         process.tasks.push(task);
+                    });
+                    process.tasks.sort((a, b) => {
+                        return a.creationTime - b.creationTime;
                     });
                     this.state.processes.push(process);
                 }
@@ -209,6 +246,40 @@ export default createStore({
                 details: "",
                 fields: [],
             };
+        },
+        async loadUserStep({ commit, state }) {
+            this.state.currentWindow = this.state.data.lastWindow;
+            let previousProcessHash = this.state.process.hash;
+            let previousProcessUpdated = this.state.processUpdated;
+            this.state.processes.forEach((process) => {
+                if (process.hash == previousProcessHash)
+                    process.updated = previousProcessUpdated;
+                if (process.hash == this.state.data.lastProcess) {
+                    process.active = true;
+                    this.state.processUpdated = process.updated;
+                    this.state.process = process;
+                    this.state.processSelected = true;
+                } else process.active = false;
+            });
+            if (
+                ["EditTask", "TaskUsers"].includes(
+                    this.state.data.lastWindow
+                ) &&
+                this.state.data.lastTask != ""
+            ) {
+                let previousTaskHash = this.state.task.hash;
+                let previousTaskUpdated = this.state.taskUpdated;
+                this.state.process.tasks.forEach((task) => {
+                    if (task.hash == previousTaskHash)
+                        task.updated = previousTaskUpdated;
+                    if (task.hash == this.state.data.lastTask) {
+                        task.active = true;
+                        this.state.taskUpdated = task.updated;
+                        this.state.task = task;
+                        this.state.taskSelected = true;
+                    } else task.active = false;
+                });
+            }
         },
     },
     getters: {},
