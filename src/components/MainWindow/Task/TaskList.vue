@@ -7,7 +7,7 @@
         <div class="flex flex-col overflow-y-auto overflow-x-hidden h-0 grow px-4">
             <TaskButton v-for="(item, index) in $store.state.process.tasks" v-bind:key="index" :taskActive="item.active"
                 :taskUpdated="item.updated" :name="item.active ? $store.state.task.name : item.name"
-                @click="!this.$store.state.creatingTask ? setActive(item.hash) : ''" />
+                @click="!this.$store.state.creatingTask ? setActive(item.hash, index) : ''" />
             
             <AddTaskButton @click="!$store.state.creatingTask ? createTask() : ''" />
         </div>
@@ -25,7 +25,7 @@ export default {
         AddTaskButton
     },
     methods: {
-        setActive(hash) {
+        setActive(hash, index) {
             let previousHash = this.$store.state.task.hash;
             let previousTaskUpdated = this.$store.state.taskUpdated;
             this.$store.state.process.tasks.forEach(task => {
@@ -35,6 +35,7 @@ export default {
                     task.active = true;
                     this.$store.state.taskUpdated = task.updated;
                     this.$store.state.task = task;
+                    this.$store.state.task.index = index;
                     this.$store.state.task.fields.forEach(field => {
                         field.active = false;
                     });
@@ -64,6 +65,11 @@ export default {
                 visibilityUsers: ["ADMIN", "USER"],
                 editUsers: ["ADMIN"],
                 completionUsers: ["USER"],
+
+                next: {
+                    type: "Automatic",
+                    data: {},
+                },
             };
             this.$store.state.process.tasks.push(this.$store.state.task);
             this.$store.dispatch('updateUserStep');

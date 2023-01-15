@@ -88,8 +88,9 @@ export default {
                 editUsers: ["ADMIN"],
                 completionUsers: ["ADMIN", "USER"],
                 users: [
-                    { name: this.$store.state.data.username, tag: "ADMIN" }
-                ],
+                    { name: this.$store.state.data.username, tag: "ADMIN", id: this.$store.state.data.id }
+                ], 
+                admin: this.$store.state.data.username,
             };
             this.$store.state.processes.push(this.$store.state.process);
             this.$store.state.currentWindow = 'EditProcess';

@@ -17,7 +17,7 @@
                 </div>
                 <div v-else>
                     Empty ...
-                </div> <!--overflow-x-auto w-0 min-w-full-->
+                </div>
             </div>
         </div>
         
@@ -30,6 +30,11 @@ import ProcessFuncButtons from "./Buttons/ProcessFuncButtons.vue"
 import ProcessTaskBtn from "./Buttons/ProcessTaskBtn.vue"
 export default {
     name: "EditProcess",
+    data() {
+        return {
+            
+        }
+    },
     components: {
         ProcessFuncButtons,
         ProcessTaskBtn

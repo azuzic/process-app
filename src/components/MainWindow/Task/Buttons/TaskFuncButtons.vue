@@ -1,12 +1,13 @@
 <template>
     <div class="flex bg-main_blackblue p-4 -my-3 -mx-4 z-10">
-        <div @click="$store.state.creatingTask ? saveTask() : updateTask()"
+        <div v-if="!$store.state.loading" @click="$store.state.creatingTask ? saveTask() : updateTask()"
         class="process justify-around bg-main_green px-4 rounded flex items-center">
             <b class="text-lg text-main_darktext">{{ $store.state.creatingTask ? 'Save task' : 'Update task' }}</b>
         </div>
-        <div @click="deleteTask()" class="process ml-4 justify-around bg-main_red px-4 rounded flex items-center">
+        <div v-if="!$store.state.loading" @click="deleteTask()" class="process ml-4 justify-around bg-main_red px-4 rounded flex items-center">
             <b class="text-lg text-main_darktext">Delete task</b>
         </div>
+        <font-awesome-icon v-if="$store.state.loading" icon="fa-spinner" class="fa-spin-pulse" size="2xl" />
     </div>
 </template>
 <script>
@@ -15,17 +16,20 @@ export default {
     name: "EditTask",
     methods: {
         async deleteTask() {
+            this.$store.state.loading = true;
             var index = this.$store.state.process.tasks.map(e => e.active).indexOf(true);
             let hash = this.$store.state.process.tasks[index].hash;
+            await deleteDoc(doc(db, "process/" + this.$store.state.process.hash + "/tasks/", hash));
+            await this.logEvent(" deleted task ");
             if (index > -1) {
                 this.$store.state.process.tasks.splice(index, 1);
                 this.$store.state.creatingTask = false;
                 this.$store.state.taskSelected = false;
             }
-            await deleteDoc(doc(db, "process/" + this.$store.state.process.hash + "/tasks/", hash));
-            await this.logEvent(" deleted task ");
+            this.$store.state.loading = false;
         },
         async saveTask() {
+            this.$store.state.loading = true;
             this.$store.state.creatingTask = false;
             this.$store.state.taskUpdated = true;
             this.$store.state.fieldSelected = false;
@@ -48,10 +52,13 @@ export default {
                 visibilityUsers: this.$store.state.task.visibilityUsers,
                 editUsers: this.$store.state.task.editUsers,
                 completionUsers: this.$store.state.task.completionUsers,
+                next: this.$store.state.task.next,
             });
             await this.logEvent(" created task ");
+            this.$store.state.loading = false;
         }, 
         async updateTask() {
+            this.$store.state.loading = true;
             this.$store.state.fieldSelected = false;
             this.$store.state.taskUpdated = true;
             this.$store.state.process.tasks.forEach(task => {
@@ -88,8 +95,10 @@ export default {
                 visibilityUsers: this.$store.state.task.visibilityUsers,
                 editUsers: this.$store.state.task.editUsers,
                 completionUsers: this.$store.state.task.completionUsers,
+                next: this.$store.state.task.next,
             });
             await this.logEvent(" updated task ");
+            this.$store.state.loading = false;
         },
         async logEvent(event) {
             if (this.$store.state.process.eventLog == undefined)

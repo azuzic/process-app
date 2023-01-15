@@ -1,0 +1,10 @@
+LOG EVENT ADD SORT
+    - updated process
+
+LOG EVENT UPDATE 
+    - created process   
+    - joined process
+
+PROCESS DIAGRAM
+
+PROCESS ANALYTICS\watch

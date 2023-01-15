@@ -38,6 +38,7 @@ export default {
             signOut(auth)
                 .then(() => {
                     console.log("Signed out!");
+                    this.resetValues();
                     this.$store.state.data.username = "";
                     this.$store.state.data.email = "";
                     this.dataUsername = "";
@@ -50,10 +51,106 @@ export default {
         usertag() {
             let tag = "";
             this.$store.state.process.users.forEach(user => {
-                if (user.name == this.$store.state.data.username)
+                if (user.name == this.$store.state.data.username) {
                     tag = user.tag;
+                }
             });
+            if (tag == "") tag = "- NO TAG -";
             return tag;
+        },
+        resetValues() {
+            this.$store.state.currentWindow = "none",
+
+            this.$store.state.eventLogUser = "",
+            this.$store.state.eventLogTask = "None",
+            this.$store.state.eventLog = {
+                joinedProcess: true,
+                finishedProcess: true,
+                createdTask: true,
+                startedTask: true,
+                updatedTask: true,
+                finishedTask: true,
+                deletedTask: true,
+                openedSession: true,
+                closedSession: true,
+            };
+
+            this.$store.state.event = "AllLogEvents",
+
+            this.$store.state.fieldSelected = false,
+            this.$store.state.creatingField = false,
+            this.$store.state.fieldUpdated = false,
+
+            this.$store.state.field = {
+                active: false,
+                updated: true,
+
+                hash: "",
+                type: "",
+                data: {},
+            };
+
+            this.$store.state.taskSelected = false,
+            this.$store.state.creatingTask = false,
+            this.$store.state.taskUpdated = false,
+
+            this.$store.state.task = {
+                active: false,
+                updated: true,
+
+                creationTime: 0,
+                hash: "",
+                name: "",
+                details: "",
+
+                fields: [],
+
+                visibilityUsers: [],
+                editUsers: [],
+                completionUsers: [],
+
+                next: {
+                    type: "",
+                    data: {},
+                },
+            };
+
+            this.$store.state.creatingProcess = false,
+            this.$store.state.processSelected = false,
+            this.$store.state.processUpdated = true,
+
+            this.$store.state.process = {
+                active: false,
+                updated: true,
+
+                hash: "",
+                name: "...",
+                details: "",
+                tasks: [],
+                eventLog: {},
+
+                visibilityUsers: [],
+                editUsers: [],
+                completionUsers: [],
+                users: [],
+            };
+            this.$store.state.processes = [],
+
+            this.$store.state.data = {
+                username: "",
+                email: "",
+                id: "",
+                processes: [],
+                lastProcess: "",
+                lastTask: "",
+                lastWindow: "",
+            };
+
+            this.$store.state.allUsers = [],
+            this.$store.state.userToAdd = {
+                username: "None",
+                id: "",
+            };
         }
     }
 }

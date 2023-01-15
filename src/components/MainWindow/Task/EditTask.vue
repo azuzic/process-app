@@ -20,6 +20,20 @@
                         :data="item.active ? $store.state.field.data : item.data" @click="!item.active ? setActive(item.hash) : ''" />
                     <AddFieldButton @click="fieldSelected = true, createField()" class="w-fit" />
                 </div>
+                <div class="mb-6 flex items-end">
+                    <select v-model="$store.state.task.next.type" class="vue-select">
+                        <option value="Automatic">Automatic</option>
+                        <option value="Task">Task</option>
+                        <option value="If">If</option>
+                        <option value="Switch">Switch</option>
+                        <option value="Divide">Divide</option>
+                    </select>
+                    <div class="ml-4">
+                        Next task is: {{ $store.state.task.index + 1 >= $store.state.process.tasks.length ? "End" : 
+                        $store.state.process.tasks[$store.state.task.index+1] != undefined ?
+                        $store.state.process.tasks[$store.state.task.index+1].name : 'End' }}
+                    </div>
+                </div>
             </div>
             <TaskFuncButtons />
         </div>

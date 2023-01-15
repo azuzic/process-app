@@ -8,6 +8,7 @@ module.exports = {
                 main_white: "rgb(217, 217, 217)",
                 main_grey: "rgba(117, 117, 117, 0.5)",
                 main_darkblue: "rgb(4, 20, 33)",
+                main_darkblueselect: "rgba(4, 20, 33, 0.5)",
                 main_blackblue: "#010910",
                 main_darktext: "#042630",
                 main_lighttext: "#A5C4C5",

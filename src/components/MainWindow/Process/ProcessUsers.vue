@@ -4,7 +4,7 @@
 
             <b class="text-lg pl-1 mt-3 mb-1">Process visibility</b>
 
-            <div class="vue-labelInput flex itmes-center overflow-x-auto w-0 min-w-full px-4">
+            <div class="vue-labelInput flex items-center overflow-x-auto w-0 min-w-full px-4">
                 <div class="flex items-center">
                     <Chip v-for="(item, index) in $store.state.process.visibilityUsers" v-bind:key="index" :name="item" class="mr-2" 
                     :array="$store.state.process.visibilityUsers" :index="index" :type="'ProcessVisibility'"/>
@@ -17,7 +17,7 @@
 
             <b class="text-lg pl-1 mt-3 mb-1">Process edit</b>
             
-            <div class="vue-labelInput flex itmes-center overflow-x-auto w-0 min-w-full px-4">
+            <div class="vue-labelInput flex items-center overflow-x-auto w-0 min-w-full px-4">
                 <div class="flex items-center">
                     <Chip v-for="(item, index) in $store.state.process.editUsers" v-bind:key="index" :name="item" class="mr-2"
                         :array="$store.state.process.editUsers" :index="index" :type="'ProcessEdit'"/>
@@ -30,7 +30,7 @@
 
             <b class="text-lg pl-1 mt-3 mb-1">Process completion</b>
             
-            <div class="vue-labelInput flex itmes-center overflow-x-auto w-0 min-w-full px-4">
+            <div class="vue-labelInput flex items-center overflow-x-auto w-0 min-w-full px-4">
                 <div class="flex items-center">
                     <Chip v-for="(item, index) in $store.state.process.completionUsers" v-bind:key="index" :name="item" class="mr-2"
                         :array="$store.state.process.completionUsers" :index="index" :type="'ProcessCompletion'"/>
@@ -47,39 +47,55 @@
                             <div class="flex-col ">
                                 <div class="text-xl absolute -mt-10 font-bold">Users</div>
                                 <div v-for="(item, index) in $store.state.process.users" v-bind:key="index" class="text-sm flex">
-                                    <b class="text-main_cyan">{{item.name}}</b>
+                                    <b @click="removeUser(item.id)" v-if="item.name != $store.state.process.admin" class="mr-1 text-main_red hover:text-main_white hover:cursor-pointer">x</b>
+                                    <b :class="item.name != $store.state.process.admin ? 'text-main_cyan' : 'text-orange-500 underline'">{{item.name}}</b>
                                 </div>
                             </div>
                             <div class="flex flex-col items-end ml-12">
                                 <div class="text-xl absolute text-right -mt-10 font-bold">Tags</div>
                                 <div v-for="(item, index) in $store.state.process.users" v-bind:key="index"
                                     class="text-sm flex justify-end">
-                                    <b :class="item.tag == 'ADMIN' ? 'text-main_red' : 'text-main_green'">{{item.tag}}</b>
+                                    <TagSelect v-if="item.name != $store.state.process.admin" :item="item"/>
+                                    <b v-else class="text-main_red">{{item.tag}}</b>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="w-full ml-8 flex h-fit mt-8 items-center">
-                    <div @click="$store.state.userToAdd != '' ? addUser() : ''"
-                        class="justify-around bg-main_green px-4 mr-4 h-10 rounded flex items-center hover:bg-main_white hover:cursor-pointer">
-                        <b class="text-lg text-main_darktext">Add user</b>
+                    <div class="flex flex-col">
+                        <div><br></div>
+                        <div @click="$store.state.userToAdd.username != 'None' && !$store.state.loading ? addUser() : ''"
+                            class="justify-around bg-main_green px-4 mr-4 h-10 rounded flex items-center"
+                            :class="$store.state.userToAdd.username != 'None' ? 'hover:bg-main_white hover:cursor-pointer' : 'opacity-50 brightness-75'">
+                            <b class="text-lg text-main_darktext"
+                            :class="$store.state.userToAdd.username != 'None' && !$store.state.loading ? '' : 'opacity-60'">
+                            Add user</b>
+                        </div>
                     </div>
-                    
-                    <select v-model="$store.state.userToAdd"
-                        class="vue-select w-48 mr-4 text-main_lighttext">
-                        <option v-for="(item, index) in array(4)" :selected="index==0" v-bind:key="index" :value="item">
-                            {{item.username}}
-                        </option>
-                    </select>
-                    <select  v-model="tag"
-                        class="vue-select w-48 mr-4 text-main_lighttext">
-                        <option v-for="(item, index) in [...new Set($store.state.process.visibilityUsers
-                        .concat($store.state.process.completionUsers).concat($store.state.process.editUsers))]" 
-                        :selected="index==0" v-bind:key="index" :value="item">
-                            {{item}}
-                        </option>
-                    </select>
+                    <div class="flex flex-col">
+                        <div>User to add:</div>
+                        <select v-model="$store.state.userToAdd"
+                            class="vue-select w-48 mr-4 text-main_lighttext">
+                            <option :value="{ username: 'None', id: ''}" selected>
+                                None
+                            </option>
+                            <option v-for="(item, index) in array(4)" v-bind:key="index" :value="item">
+                                {{item.username}}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="flex flex-col">
+                        <div>Automatic tag:</div>
+                        <select  v-model="tag"
+                            class="vue-select w-48 mr-4 text-main_lighttext">
+                            <option v-for="(item, index) in [...new Set($store.state.process.visibilityUsers
+                            .concat($store.state.process.completionUsers).concat($store.state.process.editUsers))]" 
+                            v-bind:key="index" :value="item">
+                                {{item}}
+                            </option>
+                        </select>
+                    </div>
                 </div>
             </div>
             <br>
@@ -92,19 +108,21 @@
 <script>
 import Chip from '../../Other/Chip.vue';
 import ProcessFuncButtons from "./Buttons/ProcessFuncButtons.vue";
+import TagSelect from "./Buttons/TagSelect.vue";
 import { collection, getDocs, getDoc, db, updateDoc, doc } from "@/firebase";
 export default {
     name: "ProcessUsers",
     components: {
         Chip,
-        ProcessFuncButtons
+        ProcessFuncButtons,
+        TagSelect
     },
     data() {
         return {
             visibilityChip: "",
             editChip: "",
             completionChip: "",
-            tag: ""
+            tag: "USER",
         }
     },
     methods: {
@@ -164,15 +182,18 @@ export default {
                 case 1:
                     return [...new Set(this.$store.state.process.editUsers
                             .concat(this.$store.state.process.completionUsers)
-                            .filter(n => !this.$store.state.process.visibilityUsers.includes(n)))];
+                            .filter(n => !this.$store.state.process.visibilityUsers.includes(n))
+                            .map(val => val + ","))];
                 case 2:
                     return [...new Set(this.$store.state.process.visibilityUsers
                             .concat(this.$store.state.process.completionUsers)
-                            .filter(n => !this.$store.state.process.editUsers.includes(n)))];
+                            .filter(n => !this.$store.state.process.editUsers.includes(n))
+                            .map(val => val + ","))];
                 case 3:
                     return [...new Set(this.$store.state.process.editUsers
                             .concat(this.$store.state.process.visibilityUsers)
-                            .filter(n => !this.$store.state.process.completionUsers.includes(n)))];
+                            .filter(n => !this.$store.state.process.completionUsers.includes(n))
+                            .map(val => val + ","))];
                 case 4: 
                     let processUsers = [];
                     this.$store.state.process.users.forEach(user => {
@@ -184,20 +205,43 @@ export default {
             }
         },
         async addUser() {
+            this.$store.state.loading = true;
             const docRef = doc(db, "users/", this.$store.state.userToAdd.id );
             let querySnapshot = await getDoc(docRef);
             let p = querySnapshot.data().processes;
-            console.log(p);
             p.push(this.$store.state.process.hash);
-            console.log(p);
             await updateDoc(docRef, {
                 processes: p,
             });
-            this.$store.state.process.users.push({ name: this.$store.state.userToAdd.username, tag: this.tag });
+            this.$store.state.process.users.push({ name: this.$store.state.userToAdd.username, tag: this.tag, id: this.$store.state.userToAdd.id });
+            const docRef2 = doc(db, "process/", this.$store.state.process.hash);
+            await updateDoc(docRef2, {
+                users: this.$store.state.process.users,
+            }); 
+            this.$store.state.userToAdd = {
+                username: "None",
+                id: "",
+            }
+            this.$store.state.loading = false;
+        },
+        async removeUser(id) {
+            this.$store.state.loading = true;
+            const docRef = doc(db, "users/", id);
+            let querySnapshot = await getDoc(docRef);
+            let p = querySnapshot.data().processes;
+            
+            let index = p.indexOf(this.$store.state.process.hash);
+            p.splice(index,1);
+            
+            await updateDoc(docRef, {
+                processes: p,
+            });
+            this.$store.state.process.users=this.$store.state.process.users.filter(u => u.id !== id);
             const docRef2 = doc(db, "process/", this.$store.state.process.hash);
             await updateDoc(docRef2, {
                 users: this.$store.state.process.users,
             });
+            this.$store.state.loading = false;
         }
     }
 }

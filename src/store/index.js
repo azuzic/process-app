@@ -5,6 +5,7 @@ import { collection, getDocs, db, updateDoc, doc } from "@/firebase";
 export default createStore({
     state: {
         currentWindow: "none",
+        loading: false,
 
         eventLogUser: "",
         eventLogTask: "None",
@@ -53,6 +54,11 @@ export default createStore({
             visibilityUsers: [],
             editUsers: [],
             completionUsers: [],
+
+            next: {
+                type: "",
+                data: {},
+            },
         },
 
         creatingProcess: false,
@@ -88,7 +94,7 @@ export default createStore({
 
         allUsers: [],
         userToAdd: {
-            username: "",
+            username: "None",
             id: "",
         },
     },
@@ -151,6 +157,7 @@ export default createStore({
                             `${doc.data().users}` != "undefined"
                                 ? doc.data().users
                                 : [],
+                        admin: `${doc.data().admin}`,
                     };
                     const querySnapshot3 = await getDocs(
                         collection(db, "process/" + `${doc.id}` + "/tasks")
@@ -177,6 +184,11 @@ export default createStore({
                             completionUsers: `${doc2.data().completionUsers}`
                                 .split(",")
                                 .filter((i) => i),
+
+                            next:
+                                `${doc2.data().next}` != "undefined"
+                                    ? doc2.data().next
+                                    : { type: "Automatic", data: {} },
                         };
                         task.fields.forEach((field) => {
                             field.active = false;
@@ -186,6 +198,11 @@ export default createStore({
                     });
                     process.tasks.sort((a, b) => {
                         return a.creationTime - b.creationTime;
+                    });
+                    let index = 0;
+                    process.tasks.forEach((task) => {
+                        task.index = index;
+                        index++;
                     });
                     this.state.processes.push(process);
                 }

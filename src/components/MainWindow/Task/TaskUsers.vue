@@ -114,15 +114,18 @@ export default {
                 case 1:
                     return [...new Set(this.$store.state.task.editUsers
                         .concat(this.$store.state.task.completionUsers)
-                        .filter(n => !this.$store.state.task.visibilityUsers.includes(n)))];
+                        .filter(n => !this.$store.state.task.visibilityUsers.includes(n))
+                        .map(val => val + ","))];
                 case 2:
                     return [...new Set(this.$store.state.task.visibilityUsers
                         .concat(this.$store.state.task.completionUsers)
-                        .filter(n => !this.$store.state.task.editUsers.includes(n)))];
+                        .filter(n => !this.$store.state.task.editUsers.includes(n))
+                        .map(val => val + ","))];
                 case 3:
                     return [...new Set(this.$store.state.task.editUsers
                         .concat(this.$store.state.task.visibilityUsers)
-                        .filter(n => !this.$store.state.task.completionUsers.includes(n)))];
+                        .filter(n => !this.$store.state.task.completionUsers.includes(n))
+                        .map(val => val + ","))];
                 default:
                     break;
             }

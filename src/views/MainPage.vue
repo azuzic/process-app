@@ -7,6 +7,7 @@
 
             <edit-process v-if="$store.state.currentWindow == 'EditProcess'" class="grow" />
             <process-users v-if="$store.state.currentWindow == 'ProcessUsers'" class="grow" />
+            <process-diagram v-if="$store.state.currentWindow == 'ProcessDiagram'" class="grow" />
 
             <div v-if="['EditTask', 'TaskUsers'].includes($store.state.currentWindow)" class="flex grow">
                 <task-list /> 
@@ -28,6 +29,7 @@ import ProcessesPanel from '../components/ProcessesPanel.vue';
 import ConsolePanel from '../components/ConsolePanel.vue';
 import TopMenu from '../components/MainWindow/TopMenu.vue';
 import EditProcess from '../components/MainWindow/Process/EditProcess.vue';
+import ProcessDiagram from '../components/MainWindow/Process/ProcessDiagram.vue';
 import ProcessUsers from '../components/MainWindow/Process/ProcessUsers.vue';
 import EditTask from '../components/MainWindow/Task/EditTask.vue';
 import TaskUsers from '../components/MainWindow/Task/TaskUsers.vue';
@@ -42,6 +44,7 @@ export default {
     ConsolePanel,
     TopMenu,
     EditProcess,
+    ProcessDiagram,
     EditTask,
     TaskList,
     TaskUsers,
