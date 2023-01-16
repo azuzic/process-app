@@ -47,7 +47,7 @@
                             <div class="flex-col ">
                                 <div class="text-xl absolute -mt-10 font-bold">Users</div>
                                 <div v-for="(item, index) in $store.state.process.users" v-bind:key="index" class="text-sm flex">
-                                    <b @click="removeUser(item.id)" v-if="item.name != $store.state.process.admin" class="mr-1 text-main_red hover:text-main_white hover:cursor-pointer">x</b>
+                                    <b @click="removeUser(item)" v-if="item.name != $store.state.process.admin" class="mr-1 text-main_red hover:text-main_white hover:cursor-pointer">x</b>
                                     <b :class="item.name != $store.state.process.admin ? 'text-main_cyan' : 'text-orange-500 underline'">{{item.name}}</b>
                                 </div>
                             </div>
@@ -55,7 +55,7 @@
                                 <div class="text-xl absolute text-right -mt-10 font-bold">Tags</div>
                                 <div v-for="(item, index) in $store.state.process.users" v-bind:key="index"
                                     class="text-sm flex justify-end">
-                                    <TagSelect v-if="item.name != $store.state.process.admin" :item="item"/>
+                                    <TagSelect class="hover:brightness-125 rounded-md" v-if="item.name != $store.state.process.admin" :item="item"/>
                                     <b v-else class="text-main_red">{{item.tag}}</b>
                                 </div>
                             </div>
@@ -213,20 +213,26 @@ export default {
             await updateDoc(docRef, {
                 processes: p,
             });
-            this.$store.state.process.users.push({ name: this.$store.state.userToAdd.username, tag: this.tag, id: this.$store.state.userToAdd.id });
+            this.$store.state.process.users.push({ name: this.$store.state.userToAdd.username, tag: this.tag, id: this.$store.state.userToAdd.id, state: 'None' });
             const docRef2 = doc(db, "process/", this.$store.state.process.hash);
             await updateDoc(docRef2, {
                 users: this.$store.state.process.users,
-            }); 
+            });
+            await this.$store.dispatch('logEvent', {
+                who: this.$store.state.userToAdd.username,
+                did: " joined process ",
+                what: this.$store.state.process.name,
+            });
             this.$store.state.userToAdd = {
                 username: "None",
                 id: "",
+                state: "None",
             }
             this.$store.state.loading = false;
         },
-        async removeUser(id) {
+        async removeUser(user) {
             this.$store.state.loading = true;
-            const docRef = doc(db, "users/", id);
+            const docRef = doc(db, "users/", user.id);
             let querySnapshot = await getDoc(docRef);
             let p = querySnapshot.data().processes;
             
@@ -236,12 +242,17 @@ export default {
             await updateDoc(docRef, {
                 processes: p,
             });
-            this.$store.state.process.users=this.$store.state.process.users.filter(u => u.id !== id);
+            this.$store.state.process.users=this.$store.state.process.users.filter(u => u.id !== user.id);
             const docRef2 = doc(db, "process/", this.$store.state.process.hash);
             await updateDoc(docRef2, {
                 users: this.$store.state.process.users,
             });
             this.$store.state.loading = false;
+            await this.$store.dispatch('logEvent', {
+                who: user.name,
+                did: " left process ",
+                what: this.$store.state.process.name,
+            });
         }
     }
 }

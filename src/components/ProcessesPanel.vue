@@ -88,7 +88,7 @@ export default {
                 editUsers: ["ADMIN"],
                 completionUsers: ["ADMIN", "USER"],
                 users: [
-                    { name: this.$store.state.data.username, tag: "ADMIN", id: this.$store.state.data.id }
+                    { name: this.$store.state.data.username, tag: "ADMIN", id: this.$store.state.data.id, state: "None" }
                 ], 
                 admin: this.$store.state.data.username,
             };

@@ -6,7 +6,7 @@
         </div>
         <div class="flex flex-col overflow-y-auto overflow-x-hidden h-0 grow px-4">
             <TaskButton v-for="(item, index) in $store.state.process.tasks" v-bind:key="index" :taskActive="item.active"
-                :taskUpdated="item.updated" :name="item.active ? $store.state.task.name : item.name"
+                :taskUpdated="item.updated" :name="item.active ? (index+1+'. '+ $store.state.task.name) : (index+1+'. '+item.name)"
                 @click="!this.$store.state.creatingTask ? setActive(item.hash, index) : ''" />
             
             <AddTaskButton @click="!$store.state.creatingTask ? createTask() : ''" />
@@ -35,6 +35,7 @@ export default {
                     task.active = true;
                     this.$store.state.taskUpdated = task.updated;
                     this.$store.state.task = task;
+                    this.$store.state.prevTask = JSON.stringify(task).toString();
                     this.$store.state.task.index = index;
                     this.$store.state.task.fields.forEach(field => {
                         field.active = false;

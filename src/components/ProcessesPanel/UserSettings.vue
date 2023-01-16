@@ -53,6 +53,7 @@ export default {
             this.$store.state.process.users.forEach(user => {
                 if (user.name == this.$store.state.data.username) {
                     tag = user.tag;
+                    this.$store.state.data.tag = user.tag;
                 }
             });
             if (tag == "") tag = "- NO TAG -";

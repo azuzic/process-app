@@ -14,8 +14,8 @@
 
                     <DiagramArrow :type="'Automatic'"/>
                     <div class="flex items-center" v-for="(item, index) in list" v-bind:key="index">
-                        <ProcessTaskBtnDiagram class="-mr-0.5" :name="item.name" :index="index" :selected="false" :id="item.hash"/>
-                        <DiagramArrow :type="item.next.type" :task="item" :array="list" />
+                        <ProcessTaskBtnDiagram v-if="item.visibilityUsers.includes($store.state.data.tag)" class="-mr-0.5" :name="item.name" :index="index" :selected="false" :id="item.hash"/>
+                        <DiagramArrow v-if="item.visibilityUsers.includes($store.state.data.tag)" :type="item.next.type" :task="checkNextIf(index)" :array="list" />
                     </div>
 
                     <div class="flex flex-col justify-center items-center mt-4 z-10">
@@ -52,6 +52,20 @@ export default {
         this.list = this.array('', 0);
     },  
     methods: {
+        checkNextIf(index) {
+            if (this.list[index + 1] != undefined) {
+                if (!this.list[index + 1].visibilityUsers.includes(this.$store.state.data.tag)) {
+                    for (let i = index; i < this.list.length; i++) {
+                        let e = this.list[i];
+                        if (e.next.type == 'If' && !e.visibilityUsers.includes(this.$store.state.data.tag)) {
+                            this.list[index].next = e.next;
+                            return this.list[index];
+                        }
+                    }
+                }
+            }
+            return this.list[index];
+        },
         array(taskProceed, iterationEnter) {
             try {
                 if (iterationEnter > 1) return 100;

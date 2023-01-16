@@ -2,7 +2,7 @@
     <div class="bg-main_blackblue text-main_white font-bold text-center rounded-full text-xs px-2.5 py-1.5 flex">
         <div class="whitespace-nowrap">{{ name }}</div>
         <div v-if="!['ProcessVisibility', 'ProcessEdit','TaskEdit'].includes(type) || name != 'ADMIN'">
-            <font-awesome-icon @click="array.splice(index, 1)" icon="circle-xmark" class="ml-1.5 rounded-full icon2 hover:cursor-pointer x" size="lg" />
+            <font-awesome-icon @click="array.splice(index, 1), $store.state.currentWindow == 'TaskUsers' ? $store.dispatch('checkUpdate2') : ''" icon="circle-xmark" class="ml-1.5 rounded-full icon2 hover:cursor-pointer x" size="lg" />
         </div>
     </div>
 </template>

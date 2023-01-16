@@ -11,15 +11,15 @@
         <div class="flex flex-col overflow-y-auto overflow-x-hidden h-0 grow px-4">
             <TaskButton :taskActive="$store.state.event == 'ProcessEvents'" 
             :taskUpdated="true" :disabled="false" :name="'Process Events'" 
-            @click="eventSort(['joinedProcess', 'finishedProcess'], false), $store.state.event = 'ProcessEvents'"/>
+            @click="eventSort(['joinedProcess', 'finishedProcess', 'leftProcess', 'startedProcess', 'createdProcess', 'updatedProcess'], false), $store.state.event = 'ProcessEvents'"/>
 
             <TaskButton :taskActive="$store.state.event == 'TaskEvents'" 
             :taskUpdated="true" :disabled="false" :name="'Task Events'"
             @click="eventSort(['createdTask', 'startedTask', 'updatedTask', 'finishedTask', 'deletedTask'], false), $store.state.event = 'TaskEvents'"/>
 
             <TaskButton :taskActive="$store.state.event == 'ConversationEvents'" 
-            :taskUpdated="true" :disabled="false" :name="'Conversation Events'"
-            @click="eventSort(['openedSession', 'closedSession'], false), $store.state.event = 'ConversationEvents'"/>
+            :taskUpdated="true" :disabled="true" :name="'Conversation Events'"/>+0+
+            <!-- @click="eventSort(['openedSession', 'closedSession'], false), $store.state.event = 'ConversationEvents'"/> -->
 
             <TaskButton :taskActive="$store.state.event == 'GlobalEventsAlerts'" 
             :taskUpdated="true" :disabled="true" :name="'Global Events/Alerts'"/>
@@ -39,10 +39,10 @@ export default {
         }
     },
     methods: {
-       eventSort(array, t) {
+        eventSort(array, t) {
             for (let key in this.$store.state.eventLog)
                 this.$store.state.eventLog[key] = t ? true : array.includes(key);
-       }
+        }
     },
 }
 </script>

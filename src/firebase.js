@@ -27,6 +27,9 @@ import {
     where,
     orderBy,
     deleteDoc,
+    increment,
+    arrayUnion,
+    arrayRemove,
 } from "firebase/firestore";
 
 import {
@@ -81,6 +84,9 @@ export {
     onSnapshot,
     orderBy,
     deleteDoc,
+    increment,
+    arrayUnion,
+    arrayRemove,
 };
 
 //FirebaseStorage exports

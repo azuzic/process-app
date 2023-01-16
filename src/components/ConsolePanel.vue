@@ -12,16 +12,27 @@
 
             <!--PROCESS LIST-->
             <div>
-                <block-button @click="!$store.state.creatingProcess ? ($store.state.currentWindow = 'EditProcess', $store.dispatch('updateUserStep')) : ''" 
+                <block-button @click="!$store.state.creatingProcess ? ($store.state.currentWindow = 
+                !$store.state.process.editUsers.includes($store.state.data.tag) ? 'ViewProcess' : 'EditProcess', 
+                $store.dispatch('updateUserStep')) : ''" 
                 :name="'Process'" 
+                v-if="$store.state.process.visibilityUsers.includes($store.state.data.tag)"
                 :icon="'book'" 
-                :selected="['EditProcess', 'ProcessDiagram', 'ProcessAnalytics', 'ProcessUsers'].includes($store.state.currentWindow)" 
+                :selected="['ViewProcess', 'EditProcess', 'ProcessDiagram', 'ProcessAnalytics', 'ProcessUsers'].includes($store.state.currentWindow)" 
                 :disabled="$store.state.creatingProcess"/>
 
                 <block-button @click="!$store.state.creatingProcess ? ($store.state.currentWindow = 'EditTask', $store.dispatch('updateUserStep')) : ''" 
                 :name="'Tasks'" 
+                v-if="$store.state.process.editUsers.includes($store.state.data.tag)"
                 :icon="'list-check'" 
                 :selected="['EditTask', 'TaskUsers'].includes($store.state.currentWindow)" 
+                :disabled="$store.state.creatingProcess"/>
+
+                <block-button @click="!$store.state.creatingProcess ? ($store.state.currentWindow = 'CurrentTask', $store.dispatch('updateUserStep')) : ''" 
+                :name="'Curent task'" 
+                v-if="$store.state.data.startedProcesses[this.$store.state.process.hash]"
+                :icon="'list-check'" 
+                :selected="['CurrentTask'].includes($store.state.currentWindow)" 
                 :disabled="$store.state.creatingProcess"/>
 
                 <block-button 
@@ -31,6 +42,7 @@
                 :disabled="true"/>
 
                 <block-button @click="!$store.state.creatingProcess ? ($store.state.currentWindow = 'ViewEvent', $store.dispatch('updateUserStep')) : ''"  
+                v-if="$store.state.process.editUsers.includes($store.state.data.tag)"
                 :name="'Event Log'" 
                 :icon="'bell'" 
                 :selected="['ViewEvent', 'CreateEvent'].includes($store.state.currentWindow)" 

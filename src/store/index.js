@@ -2,6 +2,12 @@ import { createStore } from "vuex";
 
 import { collection, getDocs, db, updateDoc, doc } from "@/firebase";
 
+let wait = function (seconds) {
+    return new Promise((resolveFn) => {
+        setTimeout(resolveFn, seconds * 1000);
+    });
+};
+
 export default createStore({
     state: {
         currentWindow: "none",
@@ -10,7 +16,11 @@ export default createStore({
         eventLogUser: "",
         eventLogTask: "None",
         eventLog: {
+            createdProcess: true,
+            updatedProcess: true,
             joinedProcess: true,
+            startedProcess: true,
+            leftProcess: true,
             finishedProcess: true,
             createdTask: true,
             startedTask: true,
@@ -40,6 +50,7 @@ export default createStore({
         creatingTask: false,
         taskUpdated: false,
 
+        prevTask: {},
         task: {
             active: false,
             updated: true,
@@ -90,16 +101,48 @@ export default createStore({
             lastProcess: "",
             lastTask: "",
             lastWindow: "",
+            startedProcesses: "",
         },
+
+        /*processID: {
+            currentTaskID,
+            tasks: {
+                taskID: {
+                    state: "Waiting, Started, Finished"
+                    taskData: {}               
+                }            
+            } 
+        }*/
 
         allUsers: [],
         userToAdd: {
             username: "None",
             id: "",
+            state: "None",
         },
     },
     mutations: {},
     actions: {
+        async logEvent({ commit, state }, eventLog) {
+            if (this.state.process.eventLog == undefined)
+                this.state.process["eventLog"] = {};
+
+            let date = new Date()
+                .toISOString()
+                .replace("-", "/")
+                .split("T")[0]
+                .replace("-", "/");
+
+            if (this.state.process.eventLog[date] == undefined)
+                this.state.process.eventLog[date] = [];
+
+            this.state.process.eventLog[date].unshift(eventLog);
+
+            let updateRef = doc(db, "process/", this.state.process.hash);
+            await updateDoc(updateRef, {
+                eventLog: this.state.process.eventLog,
+            });
+        },
         async getUserData({ commit, state }) {
             const querySnapshot = await getDocs(collection(db, "users"));
             this.state.allUsers = [];
@@ -124,6 +167,10 @@ export default createStore({
                     this.state.data.lastWindow =
                         `${doc.data().lastWindow}` != "undefined"
                             ? `${doc.data().lastWindow}`
+                            : "";
+                    this.state.data.startedProcesses =
+                        `${doc.data().startedProcesses}` != "undefined"
+                            ? doc.data().startedProcesses
                             : "";
                 }
             });
@@ -214,11 +261,26 @@ export default createStore({
                 if (process.active) process.updated = false;
             });
         },
-        checkUpdate2({ commit, state }) {
-            this.state.taskUpdated = false;
+        async checkUpdate2({ commit, state }) {
+            await wait(0.1);
+            this.state.taskUpdated =
+                JSON.stringify(this.state.task).toString() ==
+                this.state.prevTask;
+
             this.state.process.tasks.forEach((task) => {
-                if (task.active) task.updated = false;
+                if (task.active) task.updated = this.state.taskUpdated;
             });
+
+            if (this.state.taskUpdated)
+                this.state.prevTask = this.state.prevTask.replace(
+                    '"updated":false',
+                    '"updated":true'
+                );
+            else
+                this.state.prevTask = this.state.prevTask.replace(
+                    '"updated":true',
+                    '"updated":false'
+                );
         },
         async updateUserStep({ commit, state }) {
             let updateRef = doc(db, "users/", this.state.data.id);
@@ -293,6 +355,7 @@ export default createStore({
                         task.active = true;
                         this.state.taskUpdated = task.updated;
                         this.state.task = task;
+                        this.state.prevTask = JSON.stringify(task).toString();
                         this.state.taskSelected = true;
                     } else task.active = false;
                 });

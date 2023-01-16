@@ -20,7 +20,11 @@ export default {
             var index = this.$store.state.process.tasks.map(e => e.active).indexOf(true);
             let hash = this.$store.state.process.tasks[index].hash;
             await deleteDoc(doc(db, "process/" + this.$store.state.process.hash + "/tasks/", hash));
-            await this.logEvent(" deleted task ");
+            await this.$store.dispatch('logEvent', {
+                who: this.$store.state.data.username,
+                did: " deleted task ",
+                what: this.$store.state.task.name,
+            });
             if (index > -1) {
                 this.$store.state.process.tasks.splice(index, 1);
                 this.$store.state.creatingTask = false;
@@ -54,7 +58,11 @@ export default {
                 completionUsers: this.$store.state.task.completionUsers,
                 next: this.$store.state.task.next,
             });
-            await this.logEvent(" created task ");
+            await this.$store.dispatch('logEvent', {
+                who: this.$store.state.data.username,
+                did: " created task ",
+                what: this.$store.state.task.name,
+            });
             this.$store.state.loading = false;
         }, 
         async updateTask() {
@@ -81,12 +89,13 @@ export default {
                     case "Dropdown": field.data = { 
                         fieldLabel: field.data.fieldLabel, 
                         fieldDescription: field.data.fieldDescription,
-                        dropdownValues: field.data.defaultValue, 
+                        dropdownValues: field.data.dropdownValues, 
                         required: field.data.required }; 
                         break;
                     default: break;
                 }
             });
+            
             await updateDoc(updateRef, {
                 creationTime: this.$store.state.task.creationTime,
                 name: this.$store.state.task.name,
@@ -96,30 +105,15 @@ export default {
                 editUsers: this.$store.state.task.editUsers,
                 completionUsers: this.$store.state.task.completionUsers,
                 next: this.$store.state.task.next,
-            });
-            await this.logEvent(" updated task ");
-            this.$store.state.loading = false;
-        },
-        async logEvent(event) {
-            if (this.$store.state.process.eventLog == undefined)
-                this.$store.state.process['eventLog'] = {};
-
-            let date = new Date().toISOString().replace('-', '/').split('T')[0].replace('-', '/');
-
-            if (this.$store.state.process.eventLog[date] == undefined)
-                this.$store.state.process.eventLog[date] = [];
-
-            this.$store.state.process.eventLog[date].unshift({
+            });/*
+            await this.$store.dispatch('logEvent', {
                 who: this.$store.state.data.username,
-                did: event,
+                did: " updated task ",
                 what: this.$store.state.task.name,
             });
-
-            let updateRef = doc(db, "process/", this.$store.state.process.hash);
-            await updateDoc(updateRef, {
-                eventLog: this.$store.state.process.eventLog,
-            });
-        }
+            this.$store.state.prevTask = JSON.stringify(this.$store.state.task).toString();*/
+            this.$store.state.loading = false;
+        },
     }
 }
 </script>

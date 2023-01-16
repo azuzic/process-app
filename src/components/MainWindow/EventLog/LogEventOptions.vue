@@ -12,16 +12,20 @@
                     <option v-for="(item, index) in $store.state.process.tasks" v-bind:key="index" :value="item.name">{{item.name}}</option>
                 </select>
             </div>
-
-            <LogCheckBox v-if="['AllLogEvents', 'ProcessEvents'].includes($store.state.event)" :label="'Joined process'" :value="$store.state.eventLog.joinedProcess"/>
-            <LogCheckBox v-if="['AllLogEvents', 'ProcessEvents'].includes($store.state.event)" :label="'Finished process'" :value="$store.state.eventLog.finishedProcess"/>
-            <LogCheckBox v-if="['AllLogEvents', 'TaskEvents'].includes($store.state.event)" :label="'Created task'" :value="$store.state.eventLog.createdTask"/>
-            <LogCheckBox v-if="['AllLogEvents', 'TaskEvents'].includes($store.state.event)" :label="'Started task'" :value="$store.state.eventLog.startedTask"/>
-            <LogCheckBox v-if="['AllLogEvents', 'TaskEvents'].includes($store.state.event)" :label="'Updated task'" :value="$store.state.eventLog.updatedTask"/>
-            <LogCheckBox v-if="['AllLogEvents', 'TaskEvents'].includes($store.state.event)" :label="'Finished task'" :value="$store.state.eventLog.finishedTask"/>
-            <LogCheckBox v-if="['AllLogEvents', 'TaskEvents'].includes($store.state.event)" :label="'Deleted task'" :value="$store.state.eventLog.deletedTask"/>
-            <LogCheckBox v-if="['AllLogEvents', 'ConversationEvents'].includes($store.state.event)" :label="'Opened session'" :value="$store.state.eventLog.openedSession"/>
-            <LogCheckBox v-if="['AllLogEvents', 'ConversationEvents'].includes($store.state.event)" :label="'Closed session'" :value="$store.state.eventLog.closedSession"/>
+            
+            <LogCheckBox :disabled="false" v-if="['AllLogEvents', 'ProcessEvents'].includes($store.state.event)" :label="'Created process'" :value="$store.state.eventLog.createdProcess"/>
+            <LogCheckBox :disabled="false" v-if="['AllLogEvents', 'ProcessEvents'].includes($store.state.event)" :label="'Updated process'" :value="$store.state.eventLog.updatedProcess"/>
+            <LogCheckBox :disabled="false" v-if="['AllLogEvents', 'ProcessEvents'].includes($store.state.event)" :label="'Joined process'" :value="$store.state.eventLog.joinedProcess"/>
+            <LogCheckBox :disabled="false" v-if="['AllLogEvents', 'ProcessEvents'].includes($store.state.event)" :label="'Left process'" :value="$store.state.eventLog.leftProcess"/>
+            <LogCheckBox :disabled="false" v-if="['AllLogEvents', 'ProcessEvents'].includes($store.state.event)" :label="'Started process'" :value="$store.state.eventLog.startedProcess"/>
+            <LogCheckBox :disabled="false" v-if="['AllLogEvents', 'ProcessEvents'].includes($store.state.event)" :label="'Finished process'" :value="$store.state.eventLog.finishedProcess"/>
+            <LogCheckBox :disabled="false" v-if="['AllLogEvents', 'TaskEvents'].includes($store.state.event)" :label="'Created task'" :value="$store.state.eventLog.createdTask"/>
+            <LogCheckBox :disabled="false" v-if="['AllLogEvents', 'TaskEvents'].includes($store.state.event)" :label="'Started task'" :value="$store.state.eventLog.startedTask"/>
+            <LogCheckBox :disabled="false" v-if="['AllLogEvents', 'TaskEvents'].includes($store.state.event)" :label="'Updated task'" :value="$store.state.eventLog.updatedTask"/>
+            <LogCheckBox :disabled="false" v-if="['AllLogEvents', 'TaskEvents'].includes($store.state.event)" :label="'Finished task'" :value="$store.state.eventLog.finishedTask"/>
+            <LogCheckBox :disabled="false" v-if="['AllLogEvents', 'TaskEvents'].includes($store.state.event)" :label="'Deleted task'" :value="$store.state.eventLog.deletedTask"/>
+            <LogCheckBox :disabled="true" v-if="['AllLogEvents', 'ConversationEvents'].includes($store.state.event)" :label="'Opened session'" :value="$store.state.eventLog.openedSession"/>
+            <LogCheckBox :disabled="true" v-if="['AllLogEvents', 'ConversationEvents'].includes($store.state.event)" :label="'Closed session'" :value="$store.state.eventLog.closedSession"/>
 
         </div>
     </div>

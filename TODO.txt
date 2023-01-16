@@ -1,10 +1,23 @@
-LOG EVENT ADD SORT
-    - updated process
+PROCESS DIAGRAM 1/4
+    + generation
+    - clickability
+    - admin
+    + user 
 
-LOG EVENT UPDATE 
-    - created process   
-    - joined process
+PROCESS ANALYTICS
 
-PROCESS DIAGRAM
+START PROCESS
+    + add user to processStartedUsers
+    + add process to startedProcesses to user
 
-PROCESS ANALYTICS\watch
+startedProcesses: {
+    processID: {
+        currentTaskID,
+        tasks: {
+            taskID: {
+                state: "Waiting, Started, Finished"
+                taskData: {}               
+            }            
+        } 
+    }
+}

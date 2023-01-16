@@ -4,11 +4,11 @@
             <div class="flex flex-col grow">
                 <div class="flex flex-col">
                     <b class="text-lg pl-1 mt-3 mb-1">Task Name</b>
-                    <input @input="$store.state.taskUpdated ? $store.dispatch('checkUpdate2') : ''" v-model="$store.state.task.name"
+                    <input @input="$store.dispatch('checkUpdate2')" v-model="$store.state.task.name"
                         class="vue-input2 text-sm" placeholder="Enter task name ..." type="text">
                     
                     <b class="text-lg pl-1 my-1">Details</b>
-                    <textarea @input="$store.state.taskUpdated ? $store.dispatch('checkUpdate2') : ''" v-model="$store.state.task.details"
+                    <textarea @input="$store.dispatch('checkUpdate2')" v-model="$store.state.task.details"
                         class="vue-input2 text-sm" placeholder="Enter details ..." type="text" rows="4"></textarea>
                 </div>
                 
@@ -22,12 +22,12 @@
                 </div>
 
                 <div class="mb-6 flex items-end">
-                    <select v-model="$store.state.task.next.type" @input="$store.dispatch('checkUpdate2'), nextTaskType()" class="vue-select">
+                    <select v-model="$store.state.task.next.type" @input="nextTaskType()" class="vue-select">
                         <option value="Automatic">Automatic</option>
                         <option value="Task">Task</option>
                         <option value="If">If</option>
-                        <option value="Switch">Switch</option>
-                        <option value="Divide">Divide</option>
+                        <option value="Switch" disabled>Switch</option>
+                        <option value="Divide" disabled>Divide</option>
                     </select>
 
                     <div v-if="$store.state.task.next.type=='Automatic'" class="ml-4">
@@ -169,10 +169,11 @@ export default {
                     }
                     break;
                 default: break;
-            }
+            };
+            await wait(0.01);
+            this.$store.dispatch('checkUpdate2');
         },
         setActive(hash) {
-            this.$store.dispatch('checkUpdate2');
             let previousHash = this.$store.state.field.hash;
             let previousFieldUpdated = this.$store.state.fieldUpdated;
             this.$store.state.task.fields.forEach(field => {
@@ -187,9 +188,9 @@ export default {
                 else
                     field.active = false;
             });
+            this.$store.dispatch('checkUpdate2');
         },
         async createField() {
-            if (this.$store.state.taskUpdated) this.$store.dispatch('checkUpdate2');
             this.$store.state.creatingField = true;
             this.$store.state.fieldSelected = true;         
             this.$store.state.task.fields.forEach(field => {
@@ -209,6 +210,7 @@ export default {
                 },
             };
             this.$store.state.task.fields.push(this.$store.state.field);
+            this.$store.dispatch('checkUpdate2');
         },  
         array(n) {
             switch (n) {

@@ -14,6 +14,7 @@
 
     </div>
 </template>
+
 <script>
 import { doc, db, setDoc, updateDoc, deleteDoc } from "@/firebase";
 export default {
@@ -77,12 +78,20 @@ export default {
                 editUsers: this.$store.state.process.editUsers,
                 completionUsers: this.$store.state.process.completionUsers,
                 admin: this.$store.state.process.admin,
+                processStartedUsers: this.$store.state.process.processStartedUsers,
+                processInProgressUsers: this.$store.state.process.processInProgressUsers,
+                processFinishedUsers: this.$store.state.process.processFinishedUsers,
             });
             let updateRef = doc(db, "users/", this.$store.state.data.id);
             await updateDoc(updateRef, {
                 processes: hashes
             });
             this.$store.state.loading = false;
+            await this.$store.dispatch('logEvent', {
+                who: this.$store.state.data.username,
+                did: " created process ",
+                what: this.$store.state.process.name,
+            });
         },
         async updateProcess() {
             this.$store.state.loading = true;
@@ -102,6 +111,11 @@ export default {
                 users: this.$store.state.process.users,
             });
             this.$store.state.loading = false;
+            await this.$store.dispatch('logEvent', {
+                who: this.$store.state.data.username,
+                did: " updated process ",
+                what: this.$store.state.process.name,
+            });
         }
     }
 }

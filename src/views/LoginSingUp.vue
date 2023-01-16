@@ -15,7 +15,11 @@
             <div v-if="mode" class="flex flex-col">
                 <!--EMAIL-->
                 <div class="m-2 text-lg font-bold">EMAIL</div>
-                <input v-model="email" class="vue-input" type="text">
+                <input list="email" v-model="email" class="vue-input" type="text">
+                <datalist id="email">
+                    <option value="alesandro.zuzic@gmail.com" />
+                    <option value="test@gmail.com" />
+                </datalist>
         
                 <!--USERNAME-->
                 <div class="m-2 text-lg font-bold">USERNAME</div>
@@ -37,7 +41,11 @@
             <div v-else class="flex flex-col">
                 <!--EMAIL-->
                 <div class="m-2 text-lg font-bold">EMAIL</div>
-                <input v-model="email" class="vue-input" type="text">
+                <input list="email2" v-model="email" class="vue-input" type="text">
+                <datalist id="email2">
+                    <option value="alesandro.zuzic@gmail.com" />
+                    <option value="test@gmail.com" />
+                </datalist>
         
                 <!--PASSWORD-->
                 <div class="m-2 text-lg font-bold">PASSWORD</div>
@@ -74,7 +82,7 @@ export default {
         return {
             username: "",
             email: "",
-            password: "",
+            password: "lozinka123",
             passwordRepeat: "",
             usernameCheck: false,
             mode: true,

@@ -1,7 +1,14 @@
 <template>
-    <div v-if="['EditProcess', 'ProcessDiagram', 'ProcessAnalytics', 'ProcessUsers'].includes($store.state.currentWindow)" 
+    <div v-if="['ViewProcess', 'EditProcess', 'ProcessDiagram', 'ProcessAnalytics', 'ProcessUsers'].includes($store.state.currentWindow)" 
     class="menu bg-main_blackblue flex px-4 items-center">  
+
+        <menu-item @click="$store.state.currentWindow = 'ViewProcess', $store.dispatch('updateUserStep')"
+        v-if="!$store.state.process.editUsers.includes($store.state.data.tag)"
+        :selected="$store.state.currentWindow == 'ViewProcess'"
+        :disabled="false">View <br> Process</menu-item>
+
         <menu-item @click="$store.state.currentWindow = 'EditProcess', $store.dispatch('updateUserStep')"
+        v-if="$store.state.process.editUsers.includes($store.state.data.tag)"
         :selected="$store.state.currentWindow == 'EditProcess'"
         :disabled="false">Edit <br> Process</menu-item>
 
@@ -10,10 +17,12 @@
         :disabled="$store.state.creatingProcess">Process <br> Diagram</menu-item>
 
         <menu-item @click="!$store.state.creatingProcess ? ($store.state.currentWindow = 'ProcessAnalytics', $store.dispatch('updateUserStep')) : ''" 
+        v-if="$store.state.process.editUsers.includes($store.state.data.tag)"
         :selected="$store.state.currentWindow == 'ProcessAnalytics'"
         :disabled="$store.state.creatingProcess">Process <br> Analytics</menu-item>
 
         <menu-item @click="$store.state.currentWindow = 'ProcessUsers', $store.dispatch('updateUserStep')"
+        v-if="$store.state.process.editUsers.includes($store.state.data.tag)"
         :selected="$store.state.currentWindow == 'ProcessUsers'"
         :disabled="false">Process <br> Users</menu-item>
     </div>
@@ -35,6 +44,12 @@
         <menu-item 
         :selected="$store.state.currentWindow == 'CreateEvent'"
         :disabled="true">Create Event</menu-item>
+    </div>
+
+    <div v-if="['CurrentTask'].includes($store.state.currentWindow)" 
+    class="menu bg-main_blackblue flex px-4 items-center">
+        <menu-item :selected="$store.state.currentWindow == 'CurrentTask'"
+        :disabled="false">View Task</menu-item>
     </div>
 </template>
 

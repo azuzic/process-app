@@ -58,13 +58,13 @@ export default {
     },
     methods: {
         async deleteField() {
-            this.$store.dispatch('checkUpdate2');
             var index = this.$store.state.task.fields.map(e => e.active).indexOf(true);
             if (index > -1) {
                 this.$store.state.task.fields.splice(index, 1);
                 this.$store.state.creatingField = false;
                 this.$store.state.fieldSelected = false;
             }
+            this.$store.dispatch('checkUpdate2');
         },
     }
 }

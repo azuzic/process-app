@@ -1,6 +1,9 @@
 <template>
     <div :class="selected ? 'border-main_green border-3' : 'hover:bg-main_blackblue border-4 hover:cursor-pointer border-main_blackblue'"
-    class="bg-main_darkblue rounded px-3 py-4 flex font-bold items-center text-sm w-36 h-24 relative z-10">
+    class="bg-main_darkblue rounded px-3 flex font-bold items-center text-sm w-36 relative z-10"
+    :style="!$store.state.process.editUsers.includes($store.state.data.tag) ? 
+    'height: 112px; padding-top: 20px; padding-bottom: 20px;' : 
+    'height: 96px; padding-top: 16px; padding-bottom: 16px;'">
         <div class="mr-2 text-main_cyan h-full">
             {{ index+1 }}.
         </div>
@@ -8,7 +11,8 @@
             {{ name }}
         </div>
 
-        <div class="absolute h-6 -top-3 w-full right-0 flex justify-evenly">
+        <div v-if="$store.state.process.editUsers.includes($store.state.data.tag)" 
+        class="absolute h-6 -top-3 w-full right-0 flex justify-evenly">
             <div :class="selected ? 'border-main_green border-3' : 'border-main_blackblue  border-4'" class="h-5 bg-main_darkblue w-9 rounded-full flex justify-center items-center text-3xs">1</div>
             <div :class="selected ? 'border-main_green border-3' : 'border-main_blackblue border-4'" class="h-5 bg-main_darkblue w-9 rounded-full flex justify-center items-center text-3xs">12</div>
             <div :class="selected ? 'border-main_green border-3' : 'border-main_blackblue border-4'" class="h-5 bg-main_darkblue w-9 rounded-full flex justify-center items-center text-3xs">3</div>
