@@ -128,4 +128,8 @@ export default {
     line-clamp: 3;
     -webkit-box-orient: vertical;
 }
+.vue-list {
+    min-width: 240px;
+    max-width: 240px;
+}
 </style>

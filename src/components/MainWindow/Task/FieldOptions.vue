@@ -1,5 +1,5 @@
 <template>
-    <div class="fieldOptions w-60 bg-main_darkblue px-3 py-1 flex flex-col text-sm">
+    <div class="vue-list w-60 bg-main_darkblue px-3 py-1 flex flex-col text-sm">
         <div class="flex flex-col" v-if="$store.state.fieldSelected">
             <div>Field type</div>
             

@@ -1,5 +1,5 @@
 <template>
-    <div class="w-52 bg-main_darktext flex flex-col py-4">
+    <div class="vue-list bg-main_darktext flex flex-col py-4">
         <div class="flex flex-col px-4">
             <div class="text-lg font-bold"> Tasks </div>
             <hr class="border-2 border-bg_main_white rounded-full my-2">

@@ -20,19 +20,66 @@
                         :data="item.active ? $store.state.field.data : item.data" @click="!item.active ? setActive(item.hash) : ''" />
                     <AddFieldButton @click="fieldSelected = true, createField()" class="w-fit" />
                 </div>
+
                 <div class="mb-6 flex items-end">
-                    <select v-model="$store.state.task.next.type" class="vue-select">
+                    <select v-model="$store.state.task.next.type" @input="$store.dispatch('checkUpdate2'), nextTaskType()" class="vue-select">
                         <option value="Automatic">Automatic</option>
                         <option value="Task">Task</option>
                         <option value="If">If</option>
                         <option value="Switch">Switch</option>
                         <option value="Divide">Divide</option>
                     </select>
-                    <div class="ml-4">
-                        Next task is: {{ $store.state.task.index + 1 >= $store.state.process.tasks.length ? "End" : 
-                        $store.state.process.tasks[$store.state.task.index+1] != undefined ?
-                        $store.state.process.tasks[$store.state.task.index+1].name : 'End' }}
+
+                    <div v-if="$store.state.task.next.type=='Automatic'" class="ml-4">
+                        Next task is:
+                        <b class="text-main_red" v-if="$store.state.task.index + 1 >= $store.state.process.tasks.length">End</b>
+                        <b class="text-main_cyan" v-else-if="$store.state.process.tasks[$store.state.task.index + 1] != undefined">{{$store.state.process.tasks[$store.state.task.index+1].name}}</b>
+                        <b class="text-main_red" v-else>End</b>
                     </div>
+                
+                    <div v-if="$store.state.task.next.type=='Task'" class="ml-4 flex grow items-end">
+                        <div class="min-w-fit mr-2">
+                            Next task is:
+                        </div>
+                        <select v-model="$store.state.task.next.data" @input="$store.dispatch('checkUpdate2')"  
+                        class="hover:bg-main_darkblue bg-main_darktext w-full -m-0.5 p-0.5 rounded font-bold" 
+                        :class="$store.state.task.next.data.name!='End' ? 'text-main_cyan' : 'text-main_red'">
+                            <option v-for="(item, index) in array(1)" v-bind:key="index" :value="item"
+                            class="text-main_cyan">{{item.name}}
+                            </option>
+                            <option :value="{ name: 'End', id: '' }" class="text-main_red">End</option>
+                        </select>
+                    </div>
+
+                    <div v-if="$store.state.task.next.type=='If'" class="ml-4 flex flex-col grow items-end">
+                        <div>
+                            <div class="min-w-fit mr-2">
+                                If <b class="text-main_green">accepted</b> next task is:
+                            </div>
+                            <select v-model="$store.state.task.next.data.accepted" @input="$store.dispatch('checkUpdate2')"
+                                class="hover:bg-main_darkblue bg-main_darktext w-full -m-0.5 p-0.5 rounded font-bold"
+                                :class="$store.state.task.next.data.accepted != undefined ? $store.state.task.next.data.accepted.name!='End' ? 
+                                'text-main_cyan' : 'text-main_red' : ''">
+                                <option v-for="(item, index) in array(1)" v-bind:key="index" :value="item" class="text-main_cyan">{{item.name}}
+                                </option>
+                                <option :value="{ name: 'End', id: '' }" class="text-main_red">End</option>
+                            </select>
+                        </div>
+                        <div>
+                            <div class="min-w-fit mr-2">
+                                If <b class="text-main_red">declined</b> next task is:
+                            </div>
+                            <select v-model="$store.state.task.next.data.declined" @input="$store.dispatch('checkUpdate2')"
+                                class="hover:bg-main_darkblue bg-main_darktext w-full -m-0.5 p-0.5 rounded font-bold"
+                                :class="$store.state.task.next.data.declined != undefined ? $store.state.task.next.data.declined.name!='End'
+                                ? 'text-main_cyan' : 'text-main_red' : ''">
+                                <option v-for="(item, index) in array(1)" v-bind:key="index" :value="item" class="text-main_cyan">{{item.name}}
+                                </option>
+                                <option :value="{ name: 'End', id: '' }" class="text-main_red">End</option>
+                            </select>
+                        </div>
+                    </div>
+
                 </div>
             </div>
             <TaskFuncButtons />
@@ -41,8 +88,6 @@
         <FieldOptions />
 
     </div>
-    
-
 </template>
 
 <script>
@@ -52,6 +97,13 @@ import FieldOptions from "./FieldOptions.vue";
 import Field from "./Buttons/Field.vue";
 import cryptoRandomString from 'crypto-random-string';
 import TaskFuncButtons from "./Buttons/TaskFuncButtons.vue";
+
+let wait = function (seconds) {
+    return new Promise((resolveFn) => {
+        setTimeout(resolveFn, seconds * 1000);
+    });
+};
+
 export default {
     name: "EditTask",
     components: {
@@ -61,6 +113,64 @@ export default {
     TaskFuncButtons
     },
     methods: {
+        async nextTaskType() {
+            this.$store.state.task.next.data = {
+                name: "",
+                id: "",
+            }
+            await wait(0.01);
+            switch (this.$store.state.task.next.type) {
+                case "Task":
+                    let next = {};
+                    next = this.$store.state.task.index + 1 >= this.$store.state.process.tasks.length ? "End" : 
+                        this.$store.state.process.tasks[this.$store.state.task.index+1] != undefined ?
+                        this.$store.state.process.tasks[this.$store.state.task.index+1] : 'End';
+                    if (next == "End") {
+                        this.$store.state.task.next.data = {
+                            name: "End",
+                            id: "",
+                        }
+                    }
+                    else {
+                        this.$store.state.task.next.data = {
+                            name: next.name,
+                            id: next.hash,
+                        }
+                    }
+                    break;
+                case "If":
+                    let next2 = {};
+                    next2 = this.$store.state.task.index + 1 >= this.$store.state.process.tasks.length ? "End" :
+                        this.$store.state.process.tasks[this.$store.state.task.index + 1] != undefined ?
+                            this.$store.state.process.tasks[this.$store.state.task.index + 1] : 'End';
+                    if (next2 == "End") {
+                        this.$store.state.task.next.data = {
+                            accepted: {
+                                name: "End",
+                                id: "",
+                            },
+                            declined: {
+                                name: "End",
+                                id: "",
+                            }
+                        }
+                    }
+                    else {
+                        this.$store.state.task.next.data = {
+                            accepted: {
+                                name: next2.name,
+                                id: next2.hash,
+                            },
+                            declined: {
+                                name: next2.name,
+                                id: next2.hash,
+                            }
+                        }
+                    }
+                    break;
+                default: break;
+            }
+        },
         setActive(hash) {
             this.$store.dispatch('checkUpdate2');
             let previousHash = this.$store.state.field.hash;
@@ -100,6 +210,20 @@ export default {
             };
             this.$store.state.task.fields.push(this.$store.state.field);
         },  
+        array(n) {
+            switch (n) {
+                case 1:
+                    let temp = [];
+                    this.$store.state.process.tasks.forEach( task => {
+                        temp.push({
+                            name: task.name,
+                            id: task.hash,
+                        });
+                    });
+                    return temp;
+                default: break;
+            }
+        }
     }
 }
 

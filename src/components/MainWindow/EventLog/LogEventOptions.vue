@@ -1,5 +1,5 @@
 <template>
-    <div class="w-60 bg-main_darkblue px-3 py-4 flex flex-col text-sm">
+    <div class="vue-list bg-main_darkblue px-3 py-4 flex flex-col text-sm">
         <div class="flex flex-col">
             <div class="mb-1">Search users</div>
             <div class="vue-input2 mb-2 flex">
@@ -40,7 +40,3 @@ export default {
     },
 }
 </script>
-
-<style lang="scss" scoped>
-
-</style>

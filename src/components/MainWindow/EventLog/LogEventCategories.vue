@@ -1,5 +1,5 @@
 <template>
-    <div class="w-52 bg-main_darktext flex flex-col py-4">
+    <div class="vue-list bg-main_darktext flex flex-col py-4">
         <div class="flex flex-col px-4">
             <TaskButton :taskActive="$store.state.event == 'AllLogEvents'" 
             :taskUpdated="true" :disabled="false" :name="'All Log Events'"
@@ -46,3 +46,9 @@ export default {
     },
 }
 </script>
+<style lang="scss" scoped>
+.taskList {
+    min-width: 240px;
+    max-width: 240px;
+}
+</style>
