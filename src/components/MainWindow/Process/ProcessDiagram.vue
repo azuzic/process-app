@@ -14,7 +14,7 @@
 
                     <DiagramArrow :type="'Automatic'"/>
                     <div class="flex items-center" v-for="(item, index) in list" v-bind:key="index">
-                        <ProcessTaskBtnDiagram v-if="item.visibilityUsers.includes($store.state.data.tag)" class="-mr-0.5" :name="item.name" :index="index" :selected="false" :id="item.hash"/>
+                        <ProcessTaskBtnDiagram v-if="item.visibilityUsers.includes($store.state.data.tag)" class="-mr-0.5" :name="item.name" :index="index" :selected="currentTaskCheck(item)" :id="item.hash"/>
                         <DiagramArrow v-if="item.visibilityUsers.includes($store.state.data.tag)" :type="item.next.type" :task="checkNextIf(index)" :array="list" />
                     </div>
 
@@ -52,6 +52,12 @@ export default {
         this.list = this.array('', 0);
     },  
     methods: {
+        currentTaskCheck(task) {
+            if (this.$store.state.data.startedProcesses[this.$store.state.process.hash]) {
+                return task.hash == this.$store.state.data.startedProcesses[this.$store.state.process.hash].currentTaskID;
+            }
+            return false;
+        },
         checkNextIf(index) {
             if (this.list[index + 1] != undefined) {
                 if (!this.list[index + 1].visibilityUsers.includes(this.$store.state.data.tag)) {

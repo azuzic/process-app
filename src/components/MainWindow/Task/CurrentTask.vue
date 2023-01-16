@@ -3,19 +3,19 @@
         <div class="bg-main_bg px-4 flex flex-col justify-between pb-3 grow">
             <div class="flex flex-col grow">
                 <div class="flex flex-col">
-                    <b class="text-lg pl-1 mt-3 mb-1">Task Name</b>
-                    <div class="vue-input2 text-sm hover:bg-main_darktext whitespace-pre" placeholder="Enter task name ..." type="text">{{$store.state.task.name}}</div>
+                    <span class="my-3">
+                        <b class="text-lg pl-1">{{($store.state.task.index+1)+ '. '}}</b>
+                        <b class="text-lg pl-1 underline underline-offset-2">{{$store.state.task.name}}</b>
+                    </span>                    
                     
-                    <b class="text-lg pl-1 my-1">Details</b>
-                    <div class="vue-input2 text-sm hover:bg-main_darktext whitespace-pre" placeholder="Enter details ..." type="text" rows="4">
+                    <div class="text-sm whitespace-pre p-1" placeholder="Enter details ..." type="text" rows="4">
                         {{ $store.state.task.details ? $store.state.task.details : 'No details ...' }}
                     </div>
                 </div>
                 
-                <b class="text-lg pl-1 my-2">Fields</b>
-                <hr class="border-2 border-bg_white rounded-full mb-2" />
+                <b class="text-2xl mt-4">Fields</b>
                 <div class="flex flex-col overflow-y-auto px-4 -mx-4 overflow-x-hidden pb-4 h-0 grow">
-                    <FieldInput v-for="(item, index) in $store.state.task.fields" v-bind:key="index" :hash="item.hash"
+                    <FieldInput v-for="(item, index) in array()" v-bind:key="index" :hash="item.hash"
                         :type="item.active ? $store.state.field.type : item.type" :isActive="item.active"
                         :data="item.active ? $store.state.field.data : item.data" />
                 </div>
@@ -75,18 +75,10 @@ export default {
             this.$store.dispatch('checkUpdate2');
         },  
         array(n) {
-            switch (n) {
-                case 1:
-                    let temp = [];
-                    this.$store.state.process.tasks.forEach( task => {
-                        temp.push({
-                            name: task.name,
-                            id: task.hash,
-                        });
-                    });
-                    return temp;
-                default: break;
+            for (let f of this.$store.state.task.fields) {
+                f.data.value="";
             }
+            return this.$store.state.task.fields;
         }
     }
 }

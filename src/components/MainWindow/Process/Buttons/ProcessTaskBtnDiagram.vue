@@ -1,5 +1,5 @@
 <template>
-    <div :class="selected ? 'border-main_green border-3' : 'hover:bg-main_blackblue border-4 hover:cursor-pointer border-main_blackblue'"
+    <div :class="selected ? 'border-main_green border-4' : 'hover:bg-main_blackblue border-4 hover:cursor-pointer border-main_blackblue'"
     class="bg-main_darkblue rounded px-3 flex font-bold items-center text-sm w-36 relative z-10"
     :style="!$store.state.process.editUsers.includes($store.state.data.tag) ? 
     'height: 112px; padding-top: 20px; padding-bottom: 20px;' : 

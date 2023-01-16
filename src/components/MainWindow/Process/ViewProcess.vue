@@ -11,7 +11,7 @@
             <div class="text-sm pl-4 text-main_lighttext h-full flex flex-col">
                 <div v-if="$store.state.process.tasks.length > 0" class="flex flex-wrap py-4 overflow-y-auto overflow-x-hidden h-0 grow w-full"> 
                     <div class="flex flex-wrap h-fit">
-                        <ProcessTaskBtn v-for="(item, index) in $store.state.process.tasks" v-bind:key="index" :task="item" :index="index" :selected="false"/>
+                        <ProcessTaskBtn v-for="(item, index) in $store.state.process.tasks" v-bind:key="index" :task="item" :index="index" :selected="currentTaskCheck(item)"/>
                     </div>
                 </div>
                 <div v-else>
@@ -50,6 +50,12 @@ export default {
             });
             console.log("yay");
         }*/
+        currentTaskCheck(task){
+            if (this.$store.state.data.startedProcesses[this.$store.state.process.hash]) {
+                return task.hash == this.$store.state.data.startedProcesses[this.$store.state.process.hash].currentTaskID;
+            }
+            return false;
+        },
         async startProcess() {
             this.$store.state.loading = true;
             let updatingUser = {};
