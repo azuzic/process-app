@@ -37,6 +37,8 @@ export default {
                 await this.$store.dispatch('getUserData');
                 await wait(0.5);
                 await this.$store.dispatch('loadUserStep');
+                if (!!this.$store.state.data.startedProcesses[this.$store.state.process.hash])
+                    this.$store.state.task = this.$store.state.process.tasks.filter(a => a.hash == this.$store.state.data.startedProcesses[this.$store.state.process.hash].currentTaskID)[0];
                 this.$store.state.creatingProcess = false;
             } else {
                 console.log("NO USER");

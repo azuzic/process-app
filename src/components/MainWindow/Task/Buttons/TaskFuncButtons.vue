@@ -105,13 +105,13 @@ export default {
                 editUsers: this.$store.state.task.editUsers,
                 completionUsers: this.$store.state.task.completionUsers,
                 next: this.$store.state.task.next,
-            });/*
+            });
             await this.$store.dispatch('logEvent', {
                 who: this.$store.state.data.username,
                 did: " updated task ",
                 what: this.$store.state.task.name,
             });
-            this.$store.state.prevTask = JSON.stringify(this.$store.state.task).toString();*/
+            this.$store.state.prevTask = JSON.stringify(this.$store.state.task).toString();
             this.$store.state.loading = false;
         },
     }

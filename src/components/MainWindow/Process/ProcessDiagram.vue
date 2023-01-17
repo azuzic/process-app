@@ -14,7 +14,7 @@
 
                     <DiagramArrow :type="'Automatic'"/>
                     <div class="flex items-center" v-for="(item, index) in list" v-bind:key="index">
-                        <ProcessTaskBtnDiagram v-if="item.visibilityUsers.includes($store.state.data.tag)" class="-mr-0.5" :name="item.name" :index="index" :selected="currentTaskCheck(item)" :id="item.hash"/>
+                        <ProcessTaskBtnDiagram v-if="item.visibilityUsers.includes($store.state.data.tag)" class="-mr-0.5" :name="item.name" :index="index" :selected="currentTaskCheck(item)" :id="item.hash" :task="item"/>
                         <DiagramArrow v-if="item.visibilityUsers.includes($store.state.data.tag)" :type="item.next.type" :task="checkNextIf(index)" :array="list" />
                     </div>
 
@@ -52,8 +52,18 @@ export default {
         this.list = this.array('', 0);
     },  
     methods: {
-        currentTaskCheck(task) {
+        currentTaskCheck(task){            
             if (this.$store.state.data.startedProcesses[this.$store.state.process.hash]) {
+                let task2 = this.$store.state.tasksOriginal.filter(a => a.hash == task.hash)[0];
+                if (!this.$store.state.task.visibilityUsers.includes(this.$store.state.data.tag)) {
+                    switch (task2.next.type) {
+                        case "Automatic":
+                            if (this.$store.state.tasksOriginal[task2.index + 1] != undefined) {
+                                return this.$store.state.tasksOriginal[task2.index + 1].hash == this.$store.state.data.startedProcesses[this.$store.state.process.hash].currentTaskID;
+                            } break;
+                        default: break;
+                    }
+                }
                 return task.hash == this.$store.state.data.startedProcesses[this.$store.state.process.hash].currentTaskID;
             }
             return false;

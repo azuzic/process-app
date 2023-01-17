@@ -62,8 +62,7 @@ export default {
                     this.$store.state.process = process;
                     this.$store.state.processSelected = true;
                 }
-                else
-                    process.active = false;
+                else process.active = false;
             });
             this.$store.dispatch('updateUserStep');
         },
@@ -77,7 +76,7 @@ export default {
                     process.active = false;
             });
             this.$store.state.process = {
-                hash: cryptoRandomString({ length: 32, type: 'url-safe' }),
+                hash: cryptoRandomString({ length: 32, type: 'alphanumeric'}),
                 active: true,
                 updated: false,
                 name: "...",

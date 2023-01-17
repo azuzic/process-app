@@ -56,7 +56,7 @@ export default {
                     task.active = false;
             });
             this.$store.state.task = {
-                hash: cryptoRandomString({ length: 32, type: 'url-safe' }),
+                hash: cryptoRandomString({ length: 32, type: 'alphanumeric'}),
                 creationTime: new Date().getTime(),
                 active: true,
                 updated: false,

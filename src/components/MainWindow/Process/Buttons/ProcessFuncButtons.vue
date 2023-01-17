@@ -69,6 +69,7 @@ export default {
                     process = this.$store.state.process;
                 process.updated = true;
             });
+            
             await setDoc(doc(db, "process/", this.$store.state.process.hash), {
                 hash: this.$store.state.process.hash,
                 name: this.$store.state.process.name,

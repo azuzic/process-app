@@ -18,7 +18,7 @@
             @click="eventSort(['createdTask', 'startedTask', 'updatedTask', 'finishedTask', 'deletedTask'], false), $store.state.event = 'TaskEvents'"/>
 
             <TaskButton :taskActive="$store.state.event == 'ConversationEvents'" 
-            :taskUpdated="true" :disabled="true" :name="'Conversation Events'"/>+0+
+            :taskUpdated="true" :disabled="true" :name="'Conversation Events'"/>
             <!-- @click="eventSort(['openedSession', 'closedSession'], false), $store.state.event = 'ConversationEvents'"/> -->
 
             <TaskButton :taskActive="$store.state.event == 'GlobalEventsAlerts'" 

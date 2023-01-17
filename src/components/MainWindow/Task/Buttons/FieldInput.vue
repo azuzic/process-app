@@ -11,20 +11,25 @@
             </div> 
         </div>
 
-        <input v-if="type == 'Text Field'" class="vue-input2 w-full" :placeholder="data.defaultValue" type="text" v-model="data.value">
+        <input :disabled="disabled" v-if="type == 'Text Field'" class="vue-input2 w-full" 
+        :class="disabled ? 'opacity-50 brightness-50 hover:bg-main_bg' : ''" 
+        :placeholder="data.defaultValue" type="text" v-model="data.value">
         
-        <textarea v-if="type == 'Text Area'" class="vue-input2 resize-none w-full" :placeholder="data.defaultValue" type="text" rows="4" v-model="data.value"></textarea>
+        <textarea :disabled="disabled" v-if="type == 'Text Area'" class="vue-input2 resize-none w-full"
+        :class="disabled ? 'opacity-50 brightness-50 hover:bg-main_bg' : ''" 
+        :placeholder="data.defaultValue" type="text" rows="4" v-model="data.value"></textarea>
 
-        <select v-if="type == 'Dropdown'" class="vue-select w-full mt-2" v-model="data.value"> 
+        <select :disabled="disabled" v-if="type == 'Dropdown'" class="vue-select w-full"
+        :class="disabled ? 'opacity-50 brightness-50 hover:bg-main_bg' : ''" 
+        v-model="data.value"> 
             <option v-for="(item, index) in (data.dropdownValues != undefined ? data.dropdownValues.split(',') : '')" v-bind:key="index" :value="item" >{{item}}</option>
         </select>
 
         <div class="flex" v-if="type == 'Checkbox'">
             <label class="relative inline-flex items-center mt-1 mb-2">
-                <input type="checkbox" class="sr-only peer" v-model="data.value">
-                <div
-                    class="w-9 h-5 rounded-full bg-main_red peer-checked:after:translate-x-full after:absolute after:top-[2px] after:left-[2px] after:bg-main_blackblue after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-main_green">
-                </div>
+                <input :disabled="disabled" type="checkbox" class="sr-only peer" v-model="data.value">
+                <div class="w-9 h-5 rounded-full bg-main_red peer-checked:after:translate-x-full after:absolute after:top-[2px] after:left-[2px] after:bg-main_blackblue after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-main_green"
+                :class="disabled ? 'brightness-50 opacity-50' : 'hover:after:bg-main_bg'"></div>
             </label>
             <div class="ml-2 mt-0.5">{{ data.fieldLabel }}</div>
         </div>
@@ -40,6 +45,7 @@ export default {
         type: String,
         hash: String,
         data: Object,
+        disabled: Boolean,
     },  
     data() {
         return {

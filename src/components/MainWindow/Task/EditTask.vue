@@ -20,8 +20,8 @@
                         :data="item.active ? $store.state.field.data : item.data" @click="!item.active ? setActive(item.hash) : ''" />
                     <AddFieldButton @click="fieldSelected = true, createField()" class="w-fit" />
                 </div>
-
-                <div class="mb-6 flex items-end">
+                <hr class="border-2 border-bg_white rounded-full mb-2" />
+                <div class="mb-6 flex items-end mt-3">
                     <select v-model="$store.state.task.next.type" @input="nextTaskType()" class="vue-select">
                         <option value="Automatic">Automatic</option>
                         <option value="Task">Task</option>
@@ -198,7 +198,7 @@ export default {
                     field.active = false;
             });
             this.$store.state.field = {
-                hash: cryptoRandomString({ length: 32, type: 'url-safe' }),
+                hash: cryptoRandomString({ length: 32, type: 'alphanumeric'}),
                 active: true,
                 updated: false,
                 type: "Text Field",
@@ -206,6 +206,7 @@ export default {
                     fieldLabel: "Field Name",
                     fieldDescription: "Field Description",
                     defaultValue: "Enter text ...",
+                    dropdownValues: "1,2,3",
                     required: "true"
                 },
             };

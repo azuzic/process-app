@@ -21,12 +21,14 @@
         </div>
         
         <div>
-            <div v-if="!$store.state.loading && !$store.state.data.startedProcesses[this.$store.state.process.hash]" @click="startProcess()"
+            <div v-if="!$store.state.loading && !$store.state.data.startedProcesses[$store.state.process.hash]" @click="startProcess()"
                 class="process justify-around bg-main_green px-4 rounded flex items-center w-fit">
                 <b class="text-lg text-main_darktext">Start process</b>
             </div>
             <div class="justify-around px-4 rounded flex items-center w-fit" v-else-if="!$store.state.loading">
                 <b class="text-lg text-main_cyan">Process started !</b>
+                <b v-if="!$store.state.task.visibilityUsers.includes($store.state.data.tag)" 
+                class="text-lg text-main_red ml-4">Waiting for next task ...</b>
             </div>
             <font-awesome-icon v-if="$store.state.loading" icon="fa-spinner" class="fa-spin-pulse" size="2xl" />
         </div>
@@ -42,16 +44,18 @@ import { collection, getDocs, db, updateDoc, doc, increment, arrayRemove, arrayU
 export default {
     name: "ViewProcess",
     methods: {
-        /*async increment(process) {
-            console.log(process);
-            let updateRef = doc(db, "process/", process.hash);
-            await updateDoc(updateRef, {
-                number: increment(1)
-            });
-            console.log("yay");
-        }*/
-        currentTaskCheck(task){
+        currentTaskCheck(task) {
             if (this.$store.state.data.startedProcesses[this.$store.state.process.hash]) {
+                let task2 = this.$store.state.tasksOriginal.filter(a => a.hash == task.hash)[0];
+                if (!this.$store.state.task.visibilityUsers.includes(this.$store.state.data.tag)) {
+                    switch (task2.next.type) {
+                        case "Automatic":
+                            if (this.$store.state.tasksOriginal[task2.index + 1] != undefined) {
+                                return this.$store.state.tasksOriginal[task2.index + 1].hash == this.$store.state.data.startedProcesses[this.$store.state.process.hash].currentTaskID; 
+                            } break;
+                        default: break;
+                    }
+                }
                 return task.hash == this.$store.state.data.startedProcesses[this.$store.state.process.hash].currentTaskID;
             }
             return false;
@@ -71,6 +75,12 @@ export default {
             }
             await updateDoc(updateRef, {
                 users: arrayUnion(updatingUser)
+            });
+
+            updateRef = doc(db, "process/", this.$store.state.process.hash, "tasks/", this.$store.state.process.tasks[0].hash);
+            await updateDoc(updateRef, {
+                started: arrayUnion(this.$store.state.data.id),
+                inProgress: arrayUnion(this.$store.state.data.id)
             });
 
             updateRef = doc(db, "users/", this.$store.state.data.id);
@@ -94,6 +104,13 @@ export default {
                 did: " started process ",
                 what: this.$store.state.process.name,
             });
+            await this.$store.dispatch('logEvent', {
+                who: this.$store.state.data.username,
+                did: " started task ",
+                what: this.$store.state.process.tasks[0].name,
+            });
+            this.$store.state.currentWindow = "CurrentTask",
+
             this.$store.state.loading = false;
         }
     },

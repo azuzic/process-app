@@ -16,7 +16,7 @@
         
         <textarea v-if="type == 'Text Area'" class="input resize-none w-full" disabled :placeholder="data.defaultValue" type="text" rows="4"></textarea>
 
-        <select v-if="type == 'Dropdown'" disabled class="vue-select w-full mt-2"> 
+        <select v-if="type == 'Dropdown'" disabled class="vue-select w-full"> 
             <option v-for="(item, index) in (data.dropdownValues != undefined ? data.dropdownValues.split(',') : '')" v-bind:key="index" :value="item" >{{item}}</option>
         </select>
 

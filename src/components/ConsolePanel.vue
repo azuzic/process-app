@@ -30,7 +30,7 @@
 
                 <block-button @click="!$store.state.creatingProcess ? ($store.state.currentWindow = 'CurrentTask', $store.dispatch('updateUserStep')) : ''" 
                 :name="'Curent task'" 
-                v-if="$store.state.data.startedProcesses[this.$store.state.process.hash]"
+                v-if="$store.state.data.startedProcesses[this.$store.state.process.hash] && this.$store.state.task.visibilityUsers.includes(this.$store.state.data.tag)"
                 :icon="'list-check'" 
                 :selected="['CurrentTask'].includes($store.state.currentWindow)" 
                 :disabled="$store.state.creatingProcess"/>

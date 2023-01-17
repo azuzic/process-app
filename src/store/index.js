@@ -51,6 +51,7 @@ export default createStore({
         taskUpdated: false,
 
         prevTask: {},
+        tasksOriginal: [],
         task: {
             active: false,
             updated: true,
@@ -103,16 +104,6 @@ export default createStore({
             lastWindow: "",
             startedProcesses: "",
         },
-
-        /*processID: {
-            currentTaskID,
-            tasks: {
-                taskID: {
-                    state: "Waiting, Started, Finished"
-                    taskData: {}               
-                }            
-            } 
-        }*/
 
         allUsers: [],
         userToAdd: {
@@ -171,7 +162,7 @@ export default createStore({
                     this.state.data.startedProcesses =
                         `${doc.data().startedProcesses}` != "undefined"
                             ? doc.data().startedProcesses
-                            : "";
+                            : {};
                 }
             });
             const querySnapshot2 = await getDocs(collection(db, "process"));
@@ -221,6 +212,18 @@ export default createStore({
                                 `${doc2.data().fields}` != "undefined"
                                     ? doc2.data().fields
                                     : [],
+                            started:
+                                `${doc2.data().started}` != "undefined"
+                                    ? doc2.data().started
+                                    : [],
+                            finished:
+                                `${doc2.data().finished}` != "undefined"
+                                    ? doc2.data().finished
+                                    : [],
+                            inProgress:
+                                `${doc2.data().inProgress}` != "undefined"
+                                    ? doc2.data().inProgress
+                                    : [],
 
                             visibilityUsers: `${doc2.data().visibilityUsers}`
                                 .split(",")
@@ -241,13 +244,26 @@ export default createStore({
                             field.active = false;
                             field.updated = true;
                         });
+                        this.state.tasksOriginal.push({
+                            hash: task.hash,
+                            next: task.next,
+                            creationTime: task.creationTime,
+                        });
                         process.tasks.push(task);
                     });
                     process.tasks.sort((a, b) => {
                         return a.creationTime - b.creationTime;
                     });
+                    this.state.tasksOriginal.sort((a, b) => {
+                        return a.creationTime - b.creationTime;
+                    });
                     let index = 0;
                     process.tasks.forEach((task) => {
+                        task.index = index;
+                        index++;
+                    });
+                    index = 0;
+                    this.state.tasksOriginal.forEach((task) => {
                         task.index = index;
                         index++;
                     });
@@ -325,6 +341,8 @@ export default createStore({
                 details: "",
                 fields: [],
             };
+
+            this.state.tasksOriginal = [];
         },
         async loadUserStep({ commit, state }) {
             this.state.currentWindow = this.state.data.lastWindow;

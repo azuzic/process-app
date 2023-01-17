@@ -13,9 +13,9 @@
 
         <div v-if="$store.state.process.editUsers.includes($store.state.data.tag)" 
         class="absolute h-6 -top-3 w-full right-0 flex justify-evenly">
-            <div :class="selected ? 'border-main_green border-3' : 'border-main_blackblue  border-4'" class="h-5 bg-main_darkblue w-9 rounded-full flex justify-center items-center text-3xs">1</div>
-            <div :class="selected ? 'border-main_green border-3' : 'border-main_blackblue border-4'" class="h-5 bg-main_darkblue w-9 rounded-full flex justify-center items-center text-3xs">12</div>
-            <div :class="selected ? 'border-main_green border-3' : 'border-main_blackblue border-4'" class="h-5 bg-main_darkblue w-9 rounded-full flex justify-center items-center text-3xs">3</div>
+            <div :class="selected ? 'border-main_green border-3' : 'border-main_blackblue  border-4'" class="h-5 bg-main_darkblue w-9 rounded-full flex justify-center items-center text-3xs text-main_cyan">{{task.started.length}}</div>
+            <div :class="selected ? 'border-main_green border-3' : 'border-main_blackblue border-4'" class="h-5 bg-main_darkblue w-9 rounded-full flex justify-center items-center text-3xs text-main_red">{{task.inProgress.length}}</div>
+            <div :class="selected ? 'border-main_green border-3' : 'border-main_blackblue border-4'" class="h-5 bg-main_darkblue w-9 rounded-full flex justify-center items-center text-3xs text-main_yellow">{{task.finished.length}}</div>
         </div>
     </div>
 </template>
@@ -26,6 +26,7 @@ export default {
         index: Number,
         name: String,
         selected: Boolean,
+        task: Object,
     }
 }
 </script>
