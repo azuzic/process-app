@@ -2,8 +2,8 @@
     <div class="vue-list bg-main_darkblue px-3 py-4 flex flex-col text-sm">
         <div class="flex flex-col">
             <div class="mb-1">Search users</div>
-            <div class="vue-input2 mb-2 flex">
-                <font-awesome-icon icon="magnifying-glass" class="rounded-full icon2" size="lg" />
+            <div class="vue-input2 mb-2 flex items-center">
+                <i class="fa-solid fa-magnifying-glass text-main_lighttext text-lg opacity-50"></i>
                 <input v-model="$store.state.eventLogUser" class="w-full ml-2 bg-transparent outline-none" placeholder="User name ..." type="text">
             </div>
             <div v-if="$store.state.event != 'ConversationEvents'">

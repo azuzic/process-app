@@ -30,6 +30,7 @@ import {
     increment,
     arrayUnion,
     arrayRemove,
+    deleteField,
 } from "firebase/firestore";
 
 import {
@@ -87,6 +88,7 @@ export {
     increment,
     arrayUnion,
     arrayRemove,
+    deleteField,
 };
 
 //FirebaseStorage exports

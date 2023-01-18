@@ -30,13 +30,5 @@ export default {
         DropdownField,
         Checkbox,
     },  
-    data() {
-        return {
-        }
-    },
 }
 </script>
-
-<style lang="scss" scoped>
-
-</style>

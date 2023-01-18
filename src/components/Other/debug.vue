@@ -9,7 +9,7 @@
         </div>
     </div>
     <div class="absolute bottom-2 right-2 z-50">
-        <font-awesome-icon @click="debug = !debug" class="icon2 hover:cursor-pointer mr-2" icon="circle-question" size="2xl" />
+        <i @click="debug = !debug" class="fa-solid fa-circle-question text-main_lighttext hover:text-main_cyan text-4xl hover:cursor-pointer mr-2 opacity-50"></i>
     </div>
 </template>
 

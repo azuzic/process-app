@@ -1,23 +1,27 @@
 <template>
     <div class="bg-main_bg flex flex-col">
-
+        <!--PROCESS DIAGRAM NAME-->
         <b class="text-lg m-4">{{ $store.state.process.name }} - Diagram</b>
         
+        <!----------------------------------------Process diagram------------------------------------------>
         <div class="text-sm text-main_lighttext h-full flex flex-col">
             <div v-if="$store.state.process.tasks.length > 0" class="flex p-16 overflow-x-auto w-0 min-w-full grow items-center"> 
                 
                 <div class="flex items-center h-fit">
+                    <!--STARTING POINT-->
                     <div class="flex flex-col justify-center items-center mt-4 -mr-0.5">
                         <div class="border-4 border-main_blackblue bg-main_green rounded-full w-10 h-10 "></div>
                         <div class="font-bold">Start</div>
                     </div>
 
+                    <!--DIAGRAM-->
                     <DiagramArrow :type="'Automatic'"/>
                     <div class="flex items-center" v-for="(item, index) in list" v-bind:key="index">
                         <ProcessTaskBtnDiagram v-if="item.visibilityUsers.includes($store.state.data.tag)" class="-mr-0.5" :name="item.name" :index="index" :selected="currentTaskCheck(item)" :id="item.hash" :task="item"/>
                         <DiagramArrow v-if="item.visibilityUsers.includes($store.state.data.tag)" :type="item.next.type" :task="checkNextIf(index)" :array="list" />
                     </div>
 
+                    <!--ENDING POINT-->
                     <div class="flex flex-col justify-center items-center mt-4 z-10">
                         <div class="border-4 border-main_blackblue bg-main_red rounded-full w-10 h-10" id="End"></div>
                         <div class="font-bold">End</div>
@@ -25,10 +29,11 @@
                 </div>
                 
             </div>
-            <div v-else>
+            <div class="w-full h-full flex justify-center items-center text-lg font-bold text-main_red" v-else>
                 Empty ...
-            </div> <!--overflow-x-auto w-0 min-w-full-->
+            </div>
         </div>
+        <!--/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-Process diagram-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-->
 
     </div>
 </template>
@@ -49,39 +54,47 @@ export default {
         }
     },
     mounted() {
-        this.list = this.array('', 0);
+        if (this.$store.state.process.tasks.length > 0)
+            this.list = this.array('', 0);
     },  
     methods: {
+        //CHECK IF TASK IS VISIBLE TO USER
         currentTaskCheck(task){            
-            if (this.$store.state.data.startedProcesses[this.$store.state.process.hash]) {
-                let task2 = this.$store.state.tasksOriginal.filter(a => a.hash == task.hash)[0];
-                if (!this.$store.state.task.visibilityUsers.includes(this.$store.state.data.tag)) {
-                    switch (task2.next.type) {
-                        case "Automatic":
-                            if (this.$store.state.tasksOriginal[task2.index + 1] != undefined) {
-                                return this.$store.state.tasksOriginal[task2.index + 1].hash == this.$store.state.data.startedProcesses[this.$store.state.process.hash].currentTaskID;
-                            } break;
-                        default: break;
+            try {
+                if (this.$store.state.data.startedProcesses[this.$store.state.process.hash]) {
+                    let task2 = this.$store.state.tasksOriginal.filter(a => a.hash == task.hash)[0];
+                    if (!this.$store.state.task.visibilityUsers.includes(this.$store.state.data.tag)) {
+                        switch (task2.next.type) {
+                            case "Automatic":
+                                if (this.$store.state.tasksOriginal[task2.index + 1] != undefined) {
+                                    return this.$store.state.tasksOriginal[task2.index + 1].hash == this.$store.state.data.startedProcesses[this.$store.state.process.hash].currentTaskID;
+                                } break;
+                            default: break;
+                        }
                     }
+                    return task.hash == this.$store.state.data.startedProcesses[this.$store.state.process.hash].currentTaskID;
                 }
-                return task.hash == this.$store.state.data.startedProcesses[this.$store.state.process.hash].currentTaskID;
-            }
-            return false;
+                return false;
+            } catch (error) { console.error("ProcessDiagram.vue - currentTaskCheck:", error); }
         },
+        //CHECK NEXT TASK AND CONNECT ARROW TO IT
         checkNextIf(index) {
-            if (this.list[index + 1] != undefined) {
-                if (!this.list[index + 1].visibilityUsers.includes(this.$store.state.data.tag)) {
-                    for (let i = index; i < this.list.length; i++) {
-                        let e = this.list[i];
-                        if (e.next.type == 'If' && !e.visibilityUsers.includes(this.$store.state.data.tag)) {
-                            this.list[index].next = e.next;
-                            return this.list[index];
+            try {
+                if (this.list[index + 1] != undefined) {
+                    if (!this.list[index + 1].visibilityUsers.includes(this.$store.state.data.tag)) {
+                        for (let i = index; i < this.list.length; i++) {
+                            let e = this.list[i];
+                            if (e.next.type == 'If' && !e.visibilityUsers.includes(this.$store.state.data.tag)) {
+                                this.list[index].next = e.next;
+                                return this.list[index];
+                            }
                         }
                     }
                 }
-            }
-            return this.list[index];
+                return this.list[index];
+            } catch (error) { console.error("ProcessDiagram.vue - checkNextIf:", error); }
         },
+        //SORT TASKS AND GENERATE DIAGRAM
         array(taskProceed, iterationEnter) {
             try {
                 if (iterationEnter > 1) return 100;
@@ -157,21 +170,8 @@ export default {
                     overflowStop++;
                 }
                 return tasks;
-            } catch (error) {
-                console.log(error);
-            }
+            } catch (error) { console.error("ProcessDiagram.vue - array:", error); }
         }
     }
 }
 </script>
-
-<style lang="scss" scoped>
-.process {
-    height: 40px;
-
-    &:hover {
-        background-color: rgb(217, 217, 217);
-        cursor: pointer;
-    }
-}
-</style>

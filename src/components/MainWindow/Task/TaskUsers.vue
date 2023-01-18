@@ -1,9 +1,8 @@
 <template>
     <div class="bg-main_bg px-4 flex flex-col justify-between pb-3 grow overflow-hidden ">
         <div class="flex flex-col">
-
+            <!----------------------------------------Task visibility------------------------------------------>
             <b class="text-lg pl-1 mt-3 mb-1">Task visibility</b>
-
             <div class="vue-labelInput flex items-center overflow-x-auto w-0 min-w-full px-4">
                 <Chip v-for="(item, index) in $store.state.task.visibilityUsers" v-bind:key="index" :name="item" class="mr-2" 
                     :array="$store.state.task.visibilityUsers" :index="index" :type="'TaskVisibility'" />
@@ -12,9 +11,9 @@
                     <option v-for="(item, index) in array(1)" v-bind:key="index" :value="item"/>
                 </datalist>
             </div>
-
+            <!--/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-Task visibility-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-->
+            <!----------------------------------------Task edit------------------------------------------>
             <b class="text-lg pl-1 mt-3 mb-1">Task edit</b>
-            
             <div class="vue-labelInput flex items-center overflow-x-auto w-0 min-w-full px-4">
                 <Chip v-for="(item, index) in $store.state.task.editUsers" v-bind:key="index" :name="item" class="mr-2"
                     :array="$store.state.task.editUsers" :index="index" :type="'TaskEdit'" />
@@ -23,9 +22,9 @@
                     <option v-for="(item, index) in array(2)" v-bind:key="index" :value="item"/>
                 </datalist>
             </div>
-
+            <!--/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-Task edit-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-->
+            <!----------------------------------------Task completion------------------------------------------>
             <b class="text-lg pl-1 mt-3 mb-1">Task completion</b>
-            
             <div class="vue-labelInput flex items-center overflow-x-auto w-0 min-w-full px-4">
                 <Chip v-for="(item, index) in $store.state.task.completionUsers" v-bind:key="index" :name="item" class="mr-2"
                     :array="$store.state.task.completionUsers" :index="index" :type="'TaskCompletion'" />
@@ -34,8 +33,7 @@
                     <option v-for="(item, index) in array(3)" v-bind:key="index" :value="item"/>
                 </datalist>
             </div>
-            
-            <br>
+            <!--/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-Task completion-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-->
         </div>
         <TaskFuncButtons />
     </div>
@@ -59,85 +57,90 @@ export default {
     },
     methods: {
         updateVisibilityChips() {
-            if (this.visibilityChip.includes(",")) {
-                let newChip = this.visibilityChip.split(",")[0].trim();
+            try {
+                if (this.visibilityChip.includes(",")) {
+                    let newChip = this.visibilityChip.split(",")[0].trim();
 
-                if (this.$store.state.task.visibilityUsers == undefined)
-                    this.$store.state.task.visibilityUsers = [];
+                    if (this.$store.state.task.visibilityUsers == undefined)
+                        this.$store.state.task.visibilityUsers = [];
 
-                if (!this.$store.state.task.visibilityUsers.includes(newChip)) {
+                    if (!this.$store.state.task.visibilityUsers.includes(newChip)) {
 
-                    this.$store.dispatch('checkUpdate2');
+                        this.$store.dispatch('checkTaskUpdate');
 
-                    if (newChip != "") this.$store.state.task.visibilityUsers.push(newChip);
-                    this.visibilityChip = this.visibilityChip.split(",").slice(1).join(",").trim();
+                        if (newChip != "") this.$store.state.task.visibilityUsers.push(newChip);
+                        this.visibilityChip = this.visibilityChip.split(",").slice(1).join(",").trim();
+                    }
+                    else this.visibilityChip = newChip;
                 }
-                else this.visibilityChip = newChip;
-            }
+            } catch (error) { console.error("TaskUsers.vue - updateVisibilityChips:", error); }
         },
         updateEditChips() {
-            if (this.editChip.includes(",")) {
-                let newChip = this.editChip.split(",")[0].trim();
+            try {
+                if (this.editChip.includes(",")) {
+                    let newChip = this.editChip.split(",")[0].trim();
 
-                if (this.$store.state.task.editUsers == undefined)
-                    this.$store.state.task.editUsers = [];
+                    if (this.$store.state.task.editUsers == undefined)
+                        this.$store.state.task.editUsers = [];
 
-                if (!this.$store.state.task.editUsers.includes(newChip)) {
+                    if (!this.$store.state.task.editUsers.includes(newChip)) {
 
-                    this.$store.dispatch('checkUpdate2');
+                        this.$store.dispatch('checkTaskUpdate');
 
-                    if (newChip != "") this.$store.state.task.editUsers.push(newChip);
-                    this.editChip = this.editChip.split(",").slice(1).join(",").trim();
+                        if (newChip != "") this.$store.state.task.editUsers.push(newChip);
+                        this.editChip = this.editChip.split(",").slice(1).join(",").trim();
+                    }
+                    else this.editChip = newChip;
                 }
-                else this.editChip = newChip;
-            }
+            } catch (error) { console.error("TaskUsers.vue - updateEditChips:", error); }
         },
         updateCompletionChips() {
-            if (this.completionChip.includes(",")) {
-                let newChip = this.completionChip.split(",")[0].trim();
+            try {
+                if (this.completionChip.includes(",")) {
+                    let newChip = this.completionChip.split(",")[0].trim();
 
-                if (this.$store.state.task.completionChip == undefined)
-                    this.$store.state.task.completionChip = [];
+                    if (this.$store.state.task.completionChip == undefined)
+                        this.$store.state.task.completionChip = [];
 
-                if (!this.$store.state.task.completionChip.includes(newChip)) {
+                    if (!this.$store.state.task.completionChip.includes(newChip)) {
 
-                    this.$store.dispatch('checkUpdate2');
+                        this.$store.dispatch('checkTaskUpdate');
 
-                    if (newChip != "") this.$store.state.task.completionUsers.push(newChip);
-                    this.completionChip = this.completionChip.split(",").slice(1).join(",").trim();
+                        if (newChip != "") this.$store.state.task.completionUsers.push(newChip);
+                        this.completionChip = this.completionChip.split(",").slice(1).join(",").trim();
+                    }
+                    else this.completionChip = newChip;
                 }
-                else this.completionChip = newChip;
-            }
+            } catch (error) { console.error("TaskUsers.vue - updateCompletionChips:", error); }
         },
         array(a) {
-            switch (a) {
-                case 1:
-                    return [...new Set(this.$store.state.task.editUsers
-                        .concat(this.$store.state.task.completionUsers)
-                        .filter(n => !this.$store.state.task.visibilityUsers.includes(n))
-                        .map(val => val + ","))];
-                case 2:
-                    return [...new Set(this.$store.state.task.visibilityUsers
-                        .concat(this.$store.state.task.completionUsers)
-                        .filter(n => !this.$store.state.task.editUsers.includes(n))
-                        .map(val => val + ","))];
-                case 3:
-                    return [...new Set(this.$store.state.task.editUsers
-                        .concat(this.$store.state.task.visibilityUsers)
-                        .filter(n => !this.$store.state.task.completionUsers.includes(n))
-                        .map(val => val + ","))];
-                default:
-                    break;
-            }
+            try {
+                switch (a) {
+                    case 1:
+                        return [...new Set(this.$store.state.task.editUsers
+                            .concat(this.$store.state.task.completionUsers)
+                            .filter(n => !this.$store.state.task.visibilityUsers.includes(n))
+                            .map(val => val + ","))];
+                    case 2:
+                        return [...new Set(this.$store.state.task.visibilityUsers
+                            .concat(this.$store.state.task.completionUsers)
+                            .filter(n => !this.$store.state.task.editUsers.includes(n))
+                            .map(val => val + ","))];
+                    case 3:
+                        return [...new Set(this.$store.state.task.editUsers
+                            .concat(this.$store.state.task.visibilityUsers)
+                            .filter(n => !this.$store.state.task.completionUsers.includes(n))
+                            .map(val => val + ","))];
+                    default:
+                        break;
+                }
+            } catch (error) { console.error("TaskUsers.vue - array:", error); }
         }
     }
 }
 </script>
 
 <style lang="scss" scoped>
-.fields {
-    height: 500px;
-}
 .vue-labelInput {
     border-radius: 8px;
     background: #042630;

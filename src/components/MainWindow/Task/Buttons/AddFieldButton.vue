@@ -1,7 +1,7 @@
 <template>
     <div class="field mt-3 justify-around bg-main_white px-2 py-2 rounded flex items-center">
         <b class="text-sm text-main_darktext">Add field</b> 
-        <font-awesome-icon icon="circle-plus" class="rounded-full icon ml-2" size="lg" />
+        <i class="fa-solid fa-circle-plus text-main_darktext text-lg rounded-full ml-2"></i>
     </div>
 </template>
 
@@ -19,11 +19,8 @@ export default {
     &:hover {
         background-color: rgb(4, 20, 33);
         cursor: pointer;
-        b {
+        b, i{
             color: rgb(217, 217, 217);
-        }
-        .icon {
-            filter: none;
         }
     }
 }

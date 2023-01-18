@@ -1,6 +1,5 @@
 <template>
-    <div class="processesPanel bg-main_darkblue flex flex-col p-2 justify-between">
-
+    <div class="w-56 min-w-[224px] bg-main_darkblue flex flex-col p-2 justify-between">
         <div>
             <!--TITLE-->
             <div class="text-center text-3xl font-bold py-3"> PROCESSES </div>
@@ -9,37 +8,26 @@
             <!--PROCESS LIST-->
             <div>
                 <ProcessButton v-for="(item, index) in $store.state.processes" v-bind:key="index" 
-
                     :processActive="item.active" 
                     :processUpdated="item.updated"
                     :name="item.active ? $store.state.process.name : item.name" 
-
-                    @click="!this.$store.state.creatingProcess ? setActive(item.hash) : ''" />
-
+                    @click="!this.$store.state.creatingProcess ? setActive(item.hash, item.active) : ''" />
                 <AddProcessButton @click="!$store.state.creatingProcess ? createProcess() : ''" />
             </div>
         </div>
-
-        <user-settings />
-
+        <!--USER SETTINGS-->
+        <UserSettings />
     </div>
 </template>
 
 <script>
 import AddProcessButton from './ProcessesPanel/AddProcessButton.vue'
-import Label from "./ProcessesPanel/Label.vue";
 import UserSettings from './ProcessesPanel/UserSettings.vue';
 import ProcessButton from './ProcessesPanel/ProcessButton.vue';
 import cryptoRandomString from 'crypto-random-string';
 
-let wait = function (seconds) {
-    return new Promise((resolveFn) => {
-        setTimeout(resolveFn, seconds * 1000);
-    });
-};
-
 export default {
-    components: { AddProcessButton, Label, UserSettings, ProcessButton },
+    components: { AddProcessButton, UserSettings, ProcessButton },
     name: 'ProcessesPanel',
 
     data() {
@@ -48,25 +36,34 @@ export default {
         };
     },
     methods: {
-        //ENTER THE PROCESS
-        setActive(hash) {
-            this.$store.dispatch('resetValues');
-            let previousHash = this.$store.state.process.hash;
-            let previousProcessUpdated = this.$store.state.processUpdated;
-            this.$store.state.processes.forEach(process => {
-                if (process.hash == previousHash)
-                    process.updated = previousProcessUpdated;
-                if (process.hash == hash) {
-                    process.active = true;
-                    this.$store.state.processUpdated = process.updated;
-                    this.$store.state.process = process;
-                    this.$store.state.processSelected = true;
+        //Set process as active
+        setActive(hash, active) {
+            try {
+                if (!active) {
+                    this.$store.dispatch('resetValues');
+                    this.$store.state.processes.forEach(process => {
+                        if (process.hash == hash) {
+                            process.active = true;
+                            this.$store.state.processUpdated = process.updated;
+                            this.$store.state.process = process;
+                            this.$store.state.processSelected = true;
+                        }
+                        else process.active = false;
+                    });
+                    let tag = "";
+                    this.$store.state.process.users.forEach(user => {
+                        if (user.id == this.$store.state.data.id)
+                            tag = user.tag;
+                    });
+                    this.$store.state.data.tag = tag;
+                    this.$store.state.currentWindow = this.$store.state.process.editUsers.includes(tag) ? "EditProcess" : "ViewProcess";
+                    this.$store.dispatch('updateUserStep');
                 }
-                else process.active = false;
-            });
-            this.$store.dispatch('updateUserStep');
+            } catch (error) {
+                console.error("ProcessesPanel.vue - setActive:", error);
+            }
         },
-        //CREATE PROCCESS, IT'S NOT YET ADDED TO THE DATABASE
+        //Create process, it's not added to the database
         async createProcess() {
             this.$store.dispatch('resetValues');
             this.$store.state.creatingProcess = true;
@@ -76,9 +73,9 @@ export default {
                     process.active = false;
             });
             this.$store.state.process = {
-                hash: cryptoRandomString({ length: 32, type: 'alphanumeric'}),
                 active: true,
                 updated: false,
+                hash: cryptoRandomString({ length: 32, type: 'alphanumeric' }),
                 name: "...",
                 details: "",
                 tasks: [],
@@ -86,12 +83,16 @@ export default {
                 visibilityUsers: ["ADMIN", "USER"],
                 editUsers: ["ADMIN"],
                 completionUsers: ["ADMIN", "USER"],
-                users: [
-                    { name: this.$store.state.data.username, tag: "ADMIN", id: this.$store.state.data.id, state: "None" }
-                ], 
+                users: [ { name: this.$store.state.data.username, tag: "ADMIN", id: this.$store.state.data.id, state: "None" } ], 
                 admin: this.$store.state.data.username,
             };
             this.$store.state.processes.push(this.$store.state.process);
+            let tag = "";
+            this.$store.state.process.users.forEach(user => {
+                if (user.id == this.$store.state.data.id)
+                    tag = user.tag;
+            });
+            this.$store.state.data.tag = tag;
             this.$store.state.currentWindow = 'EditProcess';
             this.$store.dispatch('updateUserStep');
         },
@@ -101,12 +102,4 @@ export default {
         this.$store.state.processes = [];
     }
 }
-
 </script>
-
-<style lang="scss" scoped>
-.processesPanel {
-    min-width: 223px;
-    width: 223px;
-}
-</style>

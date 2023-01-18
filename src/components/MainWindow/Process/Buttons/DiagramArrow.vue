@@ -1,7 +1,7 @@
 <template>
     <div class="relative" v-if="['Automatic', 'Task'].includes(type)">
         <div v-if="accepted >= 0 && accepted < 190" class="w-8 border-2 rounded-full border-main_blackblue relative flex items-center justify-end mr-1.5">
-            <font-awesome-icon icon="play" class="rounded-full darkIcon absolute -mr-2" />
+            <i class="fa-solid fa-play rounded-full text-main_blackblue absolute -mr-2"></i>
         </div>
         <div v-else>
             <div class="mr-[38px]">
@@ -12,13 +12,14 @@
             <div class="border-2 rounded-full border-main_blackblue absolute flex items-center justify-end -ml-[72px] z-0"
             :class="this.task.next.data.id == '' ? 'h-20 bottom-8' : 'h-12 bottom-16'"
             :style="'margin-left: ' + (calc2(true))+'px;'">
-                <font-awesome-icon icon="play" class="rounded-full darkIcon absolute -mr-[5px] rotate-90 -bottom-2.5" /></div>
+                <i class="fa-solid fa-play rounded-full text-main_green absolute -mr-[5px] rotate-90 -bottom-2.5"></i>
+            </div>
         </div>
     </div>
     <div class="relative" v-if="type=='If'">
     
         <div v-if="accepted > 0 && accepted < 190" class="w-8 border-2 rounded-full border-main_green relative flex items-center justify-end mr-1.5">
-            <font-awesome-icon icon="play" class="rounded-full greenIcon absolute -mr-2" />
+            <i class="fa-solid fa-play rounded-full text-main_green absolute -mr-2"></i>
         </div>
         <div v-else>
             <div class="h-14 border-2 rounded-full border-main_green absolute flex items-center justify-end -ml-[72px] bottom-14 z-0"></div>
@@ -27,12 +28,13 @@
             <div class="border-2 rounded-full border-main_green absolute flex items-center justify-end -ml-[72px] z-0"
             :class="this.task.next.data.accepted.id == '' ? 'h-20 bottom-8' : 'h-12 bottom-16'"
             :style="'margin-left: ' + (calc2(true))+'px;'">
-                <font-awesome-icon icon="play" class="rounded-full greenIcon absolute -mr-[5px] rotate-90 -bottom-2.5" /></div>
+                <i class="fa-solid fa-play rounded-full text-main_green absolute -mr-[5px] rotate-90 -bottom-2.5"></i>
+            </div>
         </div>
 
         <div v-if="declined > 0 && declined < 190"
             class="w-8 border-2 rounded-full border-main_red relative flex items-center justify-end mr-1.5">
-            <font-awesome-icon icon="play" class="rounded-full redIcon absolute -mr-2" />
+                <i class="fa-solid fa-play text-main_red rounded-full absolute -mr-2"></i>
         </div>
         
         <div v-else>
@@ -45,7 +47,7 @@
 
             <div class="border-2 rounded-full border-main_red absolute flex items-center justify-end -ml-[72px] z-0"
             :style="'margin-left: ' + (calc2(false)) + 'px;  bottom: ' + (calc5(false)) + 'px; height: ' + (calc6(false)) + 'px'">
-                <font-awesome-icon icon="play" class="rounded-full redIcon absolute -mr-[5px] rotate-90 -bottom-2.5" />
+                <i class="fa-solid fa-play text-main_red rounded-full absolute -mr-[5px] rotate-90 -bottom-2.5"></i>
             </div>
 
         </div>
@@ -57,11 +59,7 @@
 
 <script>
 
-let wait = function (seconds) {
-    return new Promise((resolveFn) => {
-        setTimeout(resolveFn, seconds * 1000);
-    });
-};
+
 
 export default {
     name: "DiagramArrow",
@@ -154,7 +152,7 @@ export default {
         }
     },
     async mounted() {
-        await wait(0.1);
+        await this.$store.dispatch('wait',0.1);
         if (this.task != undefined) {
             if (this.task.next.type == 'If') {
                 this.accepted = await this.acceptedFunc(this.task.next.data.accepted.id, true);
@@ -169,17 +167,3 @@ export default {
     }
 }
 </script>
-
-<style lang="scss" scoped>
-.darkIcon {
-    filter: sepia(7%) saturate(7496%) hue-rotate(163deg) brightness(24%) contrast(160%);
-}
-.redIcon {
-    filter: invert(88%) sepia(97%) saturate(3693%) hue-rotate(352deg) brightness(96%) contrast(77%);
-}
-.greenIcon {
-    filter: invert(57%) sepia(22%) saturate(989%) hue-rotate(78deg) brightness(94%) contrast(83%);
-}
-//<font-awesome-icon icon="play" class="rounded-full icon2 absolute -mr-2" />
-</style>
-

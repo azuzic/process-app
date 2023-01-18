@@ -49,7 +49,6 @@ export default {
     },  
     data() {
         return {
-
             fieldName: 'Field Name',
             fieldDescription: 'Field Description',
             defaultValue: 'Enter text ...',

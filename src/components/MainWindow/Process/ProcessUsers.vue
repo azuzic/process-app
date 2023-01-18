@@ -1,9 +1,8 @@
 <template>
     <div class="bg-main_bg px-4 flex flex-col justify-between pb-3 grow overflow-hidden ">
         <div class="flex flex-col h-full">
-
+            <!----------------------------------------PROCESS VISIBILITY------------------------------------------>
             <b class="text-lg pl-1 mt-3 mb-1">Process visibility</b>
-
             <div class="vue-labelInput flex items-center overflow-x-auto w-0 min-w-full px-4">
                 <div class="flex items-center">
                     <Chip v-for="(item, index) in $store.state.process.visibilityUsers" v-bind:key="index" :name="item" class="mr-2" 
@@ -14,9 +13,9 @@
                     <option v-for="(item, index) in array(1)" v-bind:key="index" :value="item"/>
                 </datalist>
             </div>
-
-            <b class="text-lg pl-1 mt-3 mb-1">Process edit</b>
-            
+            <!--/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-PROCESS VISIBILITY-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-->
+            <!----------------------------------------PROCESS EDIT------------------------------------------>
+            <b class="text-lg pl-1 mt-3 mb-1">Process edit</b>            
             <div class="vue-labelInput flex items-center overflow-x-auto w-0 min-w-full px-4">
                 <div class="flex items-center">
                     <Chip v-for="(item, index) in $store.state.process.editUsers" v-bind:key="index" :name="item" class="mr-2"
@@ -27,9 +26,9 @@
                     <option v-for="(item, index) in array(2)" v-bind:key="index" :value="item"/>
                 </datalist>
             </div>
-
+            <!--/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-PROCESS EDIT-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-->
+            <!----------------------------------------PROCESS COMPLETION------------------------------------------>
             <b class="text-lg pl-1 mt-3 mb-1">Process completion</b>
-            
             <div class="vue-labelInput flex items-center overflow-x-auto w-0 min-w-full px-4">
                 <div class="flex items-center">
                     <Chip v-for="(item, index) in $store.state.process.completionUsers" v-bind:key="index" :name="item" class="mr-2"
@@ -40,7 +39,10 @@
                     <option v-for="(item, index) in array(3)" v-bind:key="index" :value="item"/>
                 </datalist>
             </div>
+            <!--/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-PROCESS COMPLETION-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-->
+
             <div class="flex grow">
+                <!----------------------------------------USER TAGS------------------------------------------>
                 <div class="pl-4 text-main_lighttext grow mt-12 flex flex-col">
                     <div class="flex flex-col overflow-y-auto overflow-x-hidden h-0 grow">
                         <div class="flex grow">
@@ -62,7 +64,10 @@
                         </div>
                     </div>
                 </div>
+                <!--/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-USER TAGS-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-->
+
                 <div class="w-full ml-8 flex h-fit mt-8 items-center">
+                    <!----------------------------------------ADD USER BUTTON------------------------------------------>
                     <div class="flex flex-col">
                         <div><br></div>
                         <div @click="$store.state.userToAdd.username != 'None' && !$store.state.loading ? addUser() : ''"
@@ -73,6 +78,8 @@
                             Add user</b>
                         </div>
                     </div>
+                    <!--/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-ADD USER BUTTON-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-->
+                    <!----------------------------------------USER TO ADD------------------------------------------>
                     <div class="flex flex-col">
                         <div>User to add:</div>
                         <select v-model="$store.state.userToAdd"
@@ -85,6 +92,8 @@
                             </option>
                         </select>
                     </div>
+                    <!--/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-USER TO ADD-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-->
+                    <!----------------------------------------AUTOMATIC TAG------------------------------------------>
                     <div class="flex flex-col">
                         <div>Automatic tag:</div>
                         <select  v-model="tag"
@@ -96,11 +105,14 @@
                             </option>
                         </select>
                     </div>
+                    <!--/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-AUTOMATIC TAG-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-->
                 </div>
+
             </div>
             <br>
         </div>
-        
+
+        <!--PROCESS UPDATE DELETE-->
         <ProcessFuncButtons />
     </div>
 </template>
@@ -109,7 +121,7 @@
 import Chip from '../../Other/Chip.vue';
 import ProcessFuncButtons from "./Buttons/ProcessFuncButtons.vue";
 import TagSelect from "./Buttons/TagSelect.vue";
-import { collection, getDocs, getDoc, db, updateDoc, doc } from "@/firebase";
+import { db, updateDoc, doc, arrayRemove, arrayUnion } from "@/firebase";
 export default {
     name: "ProcessUsers",
     components: {
@@ -127,156 +139,152 @@ export default {
     },
     methods: {
         updateVisibilityChips() {
-            if (this.visibilityChip.includes(",")) {
-                let newChip = this.visibilityChip.split(",")[0].trim();
+            try {
+                if (this.visibilityChip.includes(",")) {
+                    let newChip = this.visibilityChip.split(",")[0].trim();
 
-                if (this.$store.state.process.visibilityUsers == undefined)
-                    this.$store.state.process.visibilityUsers = [];
+                    if (this.$store.state.process.visibilityUsers == undefined)
+                        this.$store.state.process.visibilityUsers = [];
 
-                if (!this.$store.state.process.visibilityUsers.includes(newChip)) {
+                    if (!this.$store.state.process.visibilityUsers.includes(newChip)) {
 
-                    this.$store.dispatch('checkUpdate');
+                        this.$store.dispatch('checkProcessUpdate');
 
-                    if (newChip != "") this.$store.state.process.visibilityUsers.push(newChip);
-                    this.visibilityChip = this.visibilityChip.split(",").slice(1).join(",").trim();
+                        if (newChip != "") this.$store.state.process.visibilityUsers.push(newChip);
+                        this.visibilityChip = this.visibilityChip.split(",").slice(1).join(",").trim();
+                    }
+                    else this.visibilityChip = newChip;
                 }
-                else this.visibilityChip = newChip;
-            }
+            } catch (error) { console.error("ProcessUsers.vue - updateVisibilityChips:", error); }
         },
         updateEditChips() {
-            if (this.editChip.includes(",")) {
-                let newChip = this.editChip.split(",")[0].trim();
+            try {
+                if (this.editChip.includes(",")) {
+                    let newChip = this.editChip.split(",")[0].trim();
 
-                if (this.$store.state.process.editUsers == undefined)
-                    this.$store.state.process.editUsers = [];
+                    if (this.$store.state.process.editUsers == undefined)
+                        this.$store.state.process.editUsers = [];
 
-                if (!this.$store.state.process.editUsers.includes(newChip)) {
+                    if (!this.$store.state.process.editUsers.includes(newChip)) {
 
-                    this.$store.dispatch('checkUpdate');
+                        this.$store.dispatch('checkProcessUpdate');
 
-                    if (newChip != "") this.$store.state.process.editUsers.push(newChip);
-                    this.editChip = this.editChip.split(",").slice(1).join(",").trim();
+                        if (newChip != "") this.$store.state.process.editUsers.push(newChip);
+                        this.editChip = this.editChip.split(",").slice(1).join(",").trim();
+                    }
+                    else this.editChip = newChip;
                 }
-                else this.editChip = newChip;
-            }
+            } catch (error) { console.error("ProcessUsers.vue - updateEditChips:", error); }
         },
         updateCompletionChips() {
-            if (this.completionChip.includes(",")) {
-                let newChip = this.completionChip.split(",")[0].trim();
+            try {
+                if (this.completionChip.includes(",")) {
+                    let newChip = this.completionChip.split(",")[0].trim();
 
-                if (this.$store.state.process.completionChip == undefined)
-                    this.$store.state.process.completionChip = [];
+                    if (this.$store.state.process.completionChip == undefined)
+                        this.$store.state.process.completionChip = [];
 
-                if (!this.$store.state.process.completionChip.includes(newChip)) {
+                    if (!this.$store.state.process.completionChip.includes(newChip)) {
 
-                    this.$store.dispatch('checkUpdate');
+                        this.$store.dispatch('checkProcessUpdate');
 
-                    if (newChip != "") this.$store.state.process.completionUsers.push(newChip);
-                    this.completionChip = this.completionChip.split(",").slice(1).join(",").trim();
+                        if (newChip != "") this.$store.state.process.completionUsers.push(newChip);
+                        this.completionChip = this.completionChip.split(",").slice(1).join(",").trim();
+                    }
+                    else this.completionChip = newChip;
                 }
-                else this.completionChip = newChip;
-            }
+            } catch (error) { console.error("ProcessUsers.vue - updateCompletionChips:", error); }
         },
         array(a) {
-            switch (a) {
-                case 1:
-                    return [...new Set(this.$store.state.process.editUsers
+            try {
+                switch (a) {
+                    case 1:
+                        return [...new Set(this.$store.state.process.editUsers
                             .concat(this.$store.state.process.completionUsers)
                             .filter(n => !this.$store.state.process.visibilityUsers.includes(n))
                             .map(val => val + ","))];
-                case 2:
-                    return [...new Set(this.$store.state.process.visibilityUsers
+                    case 2:
+                        return [...new Set(this.$store.state.process.visibilityUsers
                             .concat(this.$store.state.process.completionUsers)
                             .filter(n => !this.$store.state.process.editUsers.includes(n))
                             .map(val => val + ","))];
-                case 3:
-                    return [...new Set(this.$store.state.process.editUsers
+                    case 3:
+                        return [...new Set(this.$store.state.process.editUsers
                             .concat(this.$store.state.process.visibilityUsers)
                             .filter(n => !this.$store.state.process.completionUsers.includes(n))
                             .map(val => val + ","))];
-                case 4: 
-                    let processUsers = [];
-                    this.$store.state.process.users.forEach(user => {
-                        processUsers.push(user.name);
-                    });
-                    return this.$store.state.allUsers.filter(n => !processUsers.includes(n.username));
-                default:
-                    break;
-            }
+                    case 4:
+                        let processUsers = [];
+                        this.$store.state.process.users.forEach(user => {
+                            processUsers.push(user.name);
+                        });
+                        return this.$store.state.allUsers.filter(n => !processUsers.includes(n.username));
+                    default:
+                        break;
+                }
+            } catch (error) { console.error("ProcessUsers.vue - array:", error); }            
         },
         async addUser() {
-            this.$store.state.loading = true;
-            const docRef = doc(db, "users/", this.$store.state.userToAdd.id );
-            let querySnapshot = await getDoc(docRef);
-            let p = querySnapshot.data().processes;
-            p.push(this.$store.state.process.hash);
-            await updateDoc(docRef, {
-                processes: p,
-            });
-            this.$store.state.process.users.push({ name: this.$store.state.userToAdd.username, tag: this.tag, id: this.$store.state.userToAdd.id, state: 'None' });
-            const docRef2 = doc(db, "process/", this.$store.state.process.hash);
-            await updateDoc(docRef2, {
-                users: this.$store.state.process.users,
-            });
-            await this.$store.dispatch('logEvent', {
-                who: this.$store.state.userToAdd.username,
-                did: " joined process ",
-                what: this.$store.state.process.name,
-            });
-            this.$store.state.userToAdd = {
-                username: "None",
-                id: "",
-                state: "None",
-            }
-            this.$store.state.loading = false;
+            try {
+                this.$store.state.loading = true;
+                try {
+                    const docRef = doc(db, "users/", this.$store.state.userToAdd.id);
+                    await updateDoc(docRef, {
+                        processes: arrayUnion(this.$store.state.process.hash),
+                    });
+                } catch (error) { console.error("ProcessUsers.vue - addUser - updateDoc - arrayUnion:", error); }   
+
+                this.$store.state.process.users.push({ name: this.$store.state.userToAdd.username, tag: this.tag, id: this.$store.state.userToAdd.id, state: 'None' });
+
+                try {
+                    const docRef2 = doc(db, "process/", this.$store.state.process.hash);
+                    await updateDoc(docRef2, {
+                        users: this.$store.state.process.users,
+                    });
+                } catch (error) { console.error("ProcessUsers.vue - addUser - updateDoc2:", error); }   
+
+                await this.$store.dispatch('logEvent', {
+                    who: this.$store.state.userToAdd.username,
+                    did: " joined process ",
+                    what: this.$store.state.process.name,
+                });
+                this.$store.state.userToAdd = {
+                    username: "None",
+                    id: "",
+                    state: "None",
+                }
+                this.$store.state.loading = false;
+            } catch (error) { console.error("ProcessUsers.vue - addUser:", error); }   
         },
         async removeUser(user) {
-            this.$store.state.loading = true;
-            const docRef = doc(db, "users/", user.id);
-            let querySnapshot = await getDoc(docRef);
-            let p = querySnapshot.data().processes;
-            
-            let index = p.indexOf(this.$store.state.process.hash);
-            p.splice(index,1);
-            
-            await updateDoc(docRef, {
-                processes: p,
-            });
-            this.$store.state.process.users=this.$store.state.process.users.filter(u => u.id !== user.id);
-            const docRef2 = doc(db, "process/", this.$store.state.process.hash);
-            await updateDoc(docRef2, {
-                users: this.$store.state.process.users,
-            });
-            this.$store.state.loading = false;
-            await this.$store.dispatch('logEvent', {
-                who: user.name,
-                did: " left process ",
-                what: this.$store.state.process.name,
-            });
+            try {
+                this.$store.state.loading = true;
+
+                try {
+                    const docRef = doc(db, "users/", user.id);
+                    await updateDoc(docRef, {
+                        processes: arrayRemove(this.$store.state.process.hash),
+                    });
+                } catch (error) { console.error("ProcessUsers.vue - removeUser - updateDoc - arrayRemove:", error); }   
+                
+
+                this.$store.state.process.users = this.$store.state.process.users.filter(u => u.id !== user.id);
+
+                try {
+                    const docRef2 = doc(db, "process/", this.$store.state.process.hash);
+                    await updateDoc(docRef2, {
+                        users: this.$store.state.process.users,
+                    });
+                } catch (error) { console.error("ProcessUsers.vue - removeUser - updateDoc2:", error); }   
+
+                await this.$store.dispatch('logEvent', {
+                    who: user.name,
+                    did: " left process ",
+                    what: this.$store.state.process.name,
+                });
+                this.$store.state.loading = false;
+            } catch (error) { console.error("ProcessUsers.vue - removeUser:", error); }  
         }
     }
 }
 </script>
-
-<style lang="scss" scoped>
-.fields {
-    height: 500px;
-}
-.vue-labelInput {
-    border-radius: 8px;
-    background: #042630;
-    border: solid #010910 2px;
-
-    &:hover {
-        background: rgb(4, 30, 40);
-    }
-
-    &:focus {
-        background: rgb(4, 20, 30);
-        border-color: #50A45E;
-    }
-}
-.chipInput {
-    width: calc(100% + 100px);
-}
-</style>

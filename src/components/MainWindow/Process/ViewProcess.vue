@@ -30,7 +30,9 @@
                 <b v-if="!$store.state.task.visibilityUsers.includes($store.state.data.tag)" 
                 class="text-lg text-main_red ml-4">Waiting for next task ...</b>
             </div>
-            <font-awesome-icon v-if="$store.state.loading" icon="fa-spinner" class="fa-spin-pulse" size="2xl" />
+            <div class="flex items-center">
+                <i v-if="$store.state.loading" class="fa-solid fa-spinner fa-spin-pulse text-main_white text-2xl"></i>
+            </div>
         </div>
     </div>
 </template>
@@ -38,80 +40,89 @@
 <script>
 import ProcessFuncButtons from "./Buttons/ProcessFuncButtons.vue"
 import ProcessTaskBtn from "./Buttons/ProcessTaskBtn.vue"
-
-import { collection, getDocs, db, updateDoc, doc, increment, arrayRemove, arrayUnion } from "@/firebase";
+import { db, updateDoc, doc, arrayRemove, arrayUnion } from "@/firebase";
 
 export default {
     name: "ViewProcess",
     methods: {
         currentTaskCheck(task) {
-            if (this.$store.state.data.startedProcesses[this.$store.state.process.hash]) {
-                let task2 = this.$store.state.tasksOriginal.filter(a => a.hash == task.hash)[0];
-                if (!this.$store.state.task.visibilityUsers.includes(this.$store.state.data.tag)) {
-                    switch (task2.next.type) {
-                        case "Automatic":
-                            if (this.$store.state.tasksOriginal[task2.index + 1] != undefined) {
-                                return this.$store.state.tasksOriginal[task2.index + 1].hash == this.$store.state.data.startedProcesses[this.$store.state.process.hash].currentTaskID; 
-                            } break;
-                        default: break;
+            try {
+                if (this.$store.state.data.startedProcesses[this.$store.state.process.hash]) {
+                    let task2 = this.$store.state.tasksOriginal.filter(a => a.hash == task.hash)[0];
+                    if (!this.$store.state.task.visibilityUsers.includes(this.$store.state.data.tag)) {
+                        switch (task2.next.type) {
+                            case "Automatic":
+                                if (this.$store.state.tasksOriginal[task2.index + 1] != undefined) {
+                                    return this.$store.state.tasksOriginal[task2.index + 1].hash == this.$store.state.data.startedProcesses[this.$store.state.process.hash].currentTaskID;
+                                } break;
+                            default: break;
+                        }
                     }
+                    return task.hash == this.$store.state.data.startedProcesses[this.$store.state.process.hash].currentTaskID;
                 }
-                return task.hash == this.$store.state.data.startedProcesses[this.$store.state.process.hash].currentTaskID;
-            }
-            return false;
+                return false;
+            } catch (error) { console.error("ViewProcess.vue - currentTaskCheck:", error); }            
         },
         async startProcess() {
-            this.$store.state.loading = true;
-            let updatingUser = {};
-            let updateRef = doc(db, "process/", this.$store.state.process.hash);
-            for (let user of this.$store.state.process.users) {
-                if (user.id == this.$store.state.data.id) {
+            try {
+                this.$store.state.loading = true;
+                let updatingUser = {};
+                let updateRef = doc(db, "process/", this.$store.state.process.hash);
+
+                try {
+                    for (let user of this.$store.state.process.users) {
+                        if (user.id == this.$store.state.data.id) {
+                            await updateDoc(updateRef, {
+                                users: arrayRemove(user)
+                            });
+                            user.state = "Started";
+                            updatingUser = user;
+                        }
+                    }
+                } catch (error) { console.error("ViewProcess.vue - startProcess - updateDoc - arrayRemove:", error); }   
+                try {
                     await updateDoc(updateRef, {
-                        users: arrayRemove(user)
+                        users: arrayUnion(updatingUser)
                     });
-                    user.state = "Started";
-                    updatingUser = user;
+                } catch (error) { console.error("ViewProcess.vue - startProcess - updateDoc - arrayUnion:", error); }   
+                
+                try {
+                    updateRef = doc(db, "process/", this.$store.state.process.hash, "tasks/", this.$store.state.process.tasks[0].hash);
+                    await updateDoc(updateRef, {
+                        started: arrayUnion(this.$store.state.data.id),
+                        inProgress: arrayUnion(this.$store.state.data.id)
+                    });
+                } catch (error) { console.error("ViewProcess.vue - startProcess - updateDoc2 - arrayUnion:", error); }   
+         
+                let startedProcess = {};
+                startedProcess = {
+                    currentTaskID: this.$store.state.process.tasks[0].hash,
+                    tasks: {},
                 }
-            }
-            await updateDoc(updateRef, {
-                users: arrayUnion(updatingUser)
-            });
+                let startedProcesses = "startedProcesses." + this.$store.state.process.hash;
 
-            updateRef = doc(db, "process/", this.$store.state.process.hash, "tasks/", this.$store.state.process.tasks[0].hash);
-            await updateDoc(updateRef, {
-                started: arrayUnion(this.$store.state.data.id),
-                inProgress: arrayUnion(this.$store.state.data.id)
-            });
+                try {
+                    updateRef = doc(db, "users/", this.$store.state.data.id);
+                    await updateDoc(updateRef, {
+                        [startedProcesses]: startedProcess,
+                    });
+                } catch (error) { console.error("ViewProcess.vue - startProcess - updateDoc3:", error); }      
 
-            updateRef = doc(db, "users/", this.$store.state.data.id);
+                this.$store.state.data.startedProcesses[this.$store.state.process.hash] = startedProcess;
 
-            let startedProcess = {};
-            startedProcess = {
-                currentTaskID: this.$store.state.process.tasks[0].hash,
-                tasks: {},
-            }
-
-            let startedProcesses = "startedProcesses." + this.$store.state.process.hash;
-
-            await updateDoc(updateRef, {
-                [startedProcesses]: startedProcess,
-            });
-
-            this.$store.state.data.startedProcesses[this.$store.state.process.hash] = startedProcess;
-            
-            await this.$store.dispatch('logEvent', {
-                who: this.$store.state.data.username,
-                did: " started process ",
-                what: this.$store.state.process.name,
-            });
-            await this.$store.dispatch('logEvent', {
-                who: this.$store.state.data.username,
-                did: " started task ",
-                what: this.$store.state.process.tasks[0].name,
-            });
-            this.$store.state.currentWindow = "CurrentTask",
-
-            this.$store.state.loading = false;
+                await this.$store.dispatch('logEvent', {
+                    who: this.$store.state.data.username,
+                    did: " started process ",
+                    what: this.$store.state.process.name,
+                });
+                await this.$store.dispatch('logEvent', {
+                    who: this.$store.state.data.username,
+                    did: " started task ",
+                    what: this.$store.state.process.tasks[0].name,
+                });
+                this.$store.state.currentWindow = "CurrentTask",
+                this.$store.state.loading = false;
+            } catch (error) { console.error("ViewProcess.vue - startProcess:", error); }     
         }
     },
     components: {
@@ -124,7 +135,6 @@ export default {
 <style lang="scss" scoped>
 .process {
     height: 40px;
-
     &:hover {
         background-color: rgb(217, 217, 217);
         cursor: pointer;

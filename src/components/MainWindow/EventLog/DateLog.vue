@@ -1,13 +1,13 @@
 <template>
     <div class="w-full flex items-center my-2">
         <div class="grow border-2 rounded-full h-0 border-main_weakcyan relative flex items-center justify-end">
-            <font-awesome-icon icon="play" class="rounded-full rotate-180 arrow absolute -mr-2" />
+            <i class="fa-solid fa-play text-main_weakcyan rotate-180 absolute -mr-2"></i>
         </div>
         <div class="text-main_weakcyan font-bold mx-4 text-sm">
             {{format(date)}}
         </div> 
         <div class="grow border-2 rounded-full h-0 border-main_weakcyan relative flex items-center">
-            <font-awesome-icon icon="play" class="rounded-full arrow absolute -ml-2" />
+            <i class="fa-solid fa-play text-main_weakcyan absolute -ml-2"></i>
         </div>
     </div>
 </template>
@@ -26,8 +26,3 @@ export default {
     }
 }
 </script>
-<style lang="scss" scoped>
-.arrow {
-    filter: sepia(20%) saturate(745%) hue-rotate(126deg) brightness(86%) contrast(87%);
-}
-</style>

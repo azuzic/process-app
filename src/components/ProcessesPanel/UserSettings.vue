@@ -1,33 +1,41 @@
 <template>
-    <div class="userSettings bg-main_blackblue -m-2 flex items-center justify-between p-2">
-        <!--USER SETTINGS-->
-        <div class="flex">
-            <img src="https://picsum.photos/200" width="43" height="43" class="rounded-full">
-            <div class="flex flex-col-reverse ml-2">
-                <Label :name="usertag()" />
-                <div class="text-main_lighttext font-bold mb-1">
-                    {{ $store.state.data.username }}
+    <div class="flex h-14 bg-main_blackblue -m-2 items-center justify-between p-2">
+        <!----------------------------------------User data------------------------------------------>
+        <div class="flex w-full items-center">
+            <!--PROFILE IMAGE-->
+            <img src="https://picsum.photos/200" class="rounded-full w-11 h-11">
+            <div class="flex flex-col mx-2 overflow-hidden grow w-[120px]">
+                <!--PROFILE USERNAME-->
+                <div class="text-main_lighttext font-bold mb-1 truncate"> {{ $store.state.data.username }}</div>
+                <!--PROFILE TAG-->
+                <div class="bg-main_yellow text-main_darktext truncate w-fit font-bold text-center rounded-full overflow-hidden text-xs h-4 px-2">
+                    {{ getUserTag() }}
                 </div>
             </div>
         </div>
-        <div class="relative">
-            <div v-if="cog" @click="logout()" class="items-center justify-between absolute bottom-8 bg-main_white text-main_darktext font-bold flex w-32 p-2 rounded hover:cursor-pointer hover:underline">
-                Log Out <font-awesome-icon class="icon mr-2" icon="right-from-bracket" />
+        <!--/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-User data-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-->
+
+        <!----------------------------------------User settings------------------------------------------>
+        <div class="relative items-center h-full flex">
+            <!--PROFILE SETTINGS-->
+            <i @click="cog = !cog" class="fa-solid fa-gear hover:cursor-pointer hover:text-main_bg text-2xl" :class="cog ? 'rotate-45' : ''"></i>
+            <!--LOG OUT-->
+            <div v-if="cog" @click="logout()"
+                class=" absolute bottom-10 font-bold bg-main_white w-32 p-2 rounded text-main_darktext text-base hover:cursor-pointer hover:underline grow flex justify-between items-center">
+                Log Out
+                <i class="fa-solid text-main_bg fa-right-from-bracket"></i>
             </div>
-            <font-awesome-icon @click="cog = !cog" class="cog" icon="cog" size="xl" />
-        </div>
+        </div >        
+        <!--/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-User settings-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-->
     </div>
 </template>
 
 <script>
-import Label from './Label.vue';
 import { signOut, getAuth } from "@/firebase";
-
 const auth = getAuth();
 
 export default {
     name: "UserSettings",
-    components: { Label },
     data() {
         return {
             cog: false,
@@ -44,20 +52,18 @@ export default {
                     this.dataUsername = "";
                     this.$router.push('/');
                 })
-                .catch(() => {
-                    console.error("Signed out error!");
+                .catch((error) => {
+                    console.error("UserSettings.vue - logout:", error);
                 });
         },
-        usertag() {
-            let tag = "";
-            this.$store.state.process.users.forEach(user => {
-                if (user.name == this.$store.state.data.username) {
-                    tag = user.tag;
-                    this.$store.state.data.tag = user.tag;
-                }
-            });
-            if (tag == "") tag = "- NO TAG -";
-            return tag;
+        //GET USER TAG FROM ACTIVE PROCESS
+        getUserTag() {
+            try {
+                let user = this.$store.state.process.users.filter(user => user.id == this.$store.state.data.id);
+                return user[0] != undefined ? user[0].tag : "- NO TAG -";
+            } catch (error) {
+                console.error("UserSettings.vue - getUserTag:", error);
+            }
         },
         resetValues() {
             this.$store.state.currentWindow = "none",
@@ -65,7 +71,11 @@ export default {
             this.$store.state.eventLogUser = "",
             this.$store.state.eventLogTask = "None",
             this.$store.state.eventLog = {
+                createdProcess: true,
+                updatedProcess: true,
                 joinedProcess: true,
+                startedProcess: true,
+                leftProcess: true,
                 finishedProcess: true,
                 createdTask: true,
                 startedTask: true,
@@ -110,10 +120,7 @@ export default {
                 editUsers: [],
                 completionUsers: [],
 
-                next: {
-                    type: "",
-                    data: {},
-                },
+                next: {},
             };
 
             this.$store.state.creatingProcess = false,
@@ -145,26 +152,17 @@ export default {
                 lastProcess: "",
                 lastTask: "",
                 lastWindow: "",
+                startedProcesses: {},
             };
 
             this.$store.state.allUsers = [],
+
             this.$store.state.userToAdd = {
                 username: "None",
                 id: "",
+                state: "None",
             };
         }
     }
 }
 </script>
-
-<style lang="scss" scoped>
-.userSettings {
-    height: 58px;
-}
-.cog {
-    &:hover {
-        cursor: pointer;
-        filter: invert(85%) sepia(37%) saturate(962%) hue-rotate(148deg) brightness(95%) contrast(97%);
-    }
-}
-</style>

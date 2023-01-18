@@ -1,9 +1,10 @@
 <template>
-    <div class="bg-main_blackblue text-main_white font-bold text-center rounded-full text-xs px-2.5 py-1.5 flex">
+    <div class="bg-main_blackblue text-main_white font-bold text-center rounded-full text-xs px-2.5 py-1.5 flex items-center">
         <div class="whitespace-nowrap">{{ name }}</div>
-        <div v-if="!['ProcessVisibility', 'ProcessEdit','TaskEdit'].includes(type) || name != 'ADMIN'">
-            <font-awesome-icon @click="array.splice(index, 1), $store.state.currentWindow == 'TaskUsers' ? $store.dispatch('checkUpdate2') : ''" icon="circle-xmark" class="ml-1.5 rounded-full icon2 hover:cursor-pointer x" size="lg" />
-        </div>
+
+        <i v-if="!['ProcessVisibility', 'ProcessEdit','TaskEdit'].includes(type) || name != 'ADMIN'"
+        @click="array.splice(index, 1), $store.state.currentWindow == 'TaskUsers' ? $store.dispatch('checkTaskUpdate') : ''"  
+        class="fa-solid text-main_white fa-circle-xmark ml-1.5 rounded-full hover:cursor-pointer hover:text-main_red text-sm"></i>
     </div>
 </template>
 
@@ -19,8 +20,3 @@ export default {
     }
 }
 </script>
-<style lang="scss" scoped>
-.x:hover {
-    filter: invert(75%) sepia(88%) saturate(2267%) hue-rotate(347deg) brightness(92%) contrast(86%);
-}
-</style>

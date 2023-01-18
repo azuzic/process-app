@@ -30,8 +30,11 @@
                 <b class="text-lg text-main_cyan">Task completed !</b>
             </div>
             <div v-if="$store.state.loading" class="process justify-around px-4 rounded flex items-center w-fit py-2">
-                <font-awesome-icon icon="fa-spinner" class="fa-spin-pulse" size="2xl" />
+                <div class="flex items-center">
+                    <i v-if="$store.state.loading" class="fa-solid fa-spinner fa-spin-pulse text-main_white text-2xl"></i>
+                </div>
             </div>
+            
         </div>
 
     </div>
@@ -55,71 +58,84 @@ export default {
     },
     methods: {
         load() {
-            this.$store.state.task = this.$store.state.process.tasks.filter(a => a.hash == this.$store.state.data.startedProcesses[this.$store.state.process.hash].currentTaskID)[0];
-            if (!this.checkCompleted())
-                for (let f of this.$store.state.task.fields)
-                    f.data.value = f.type != "Checkbox" ? "" : false;
-            else {
-                for (let f of this.$store.state.task.fields)
-                    f.data.value = this.$store.state.data.startedProcesses[this.$store.state.process.hash].tasks[this.$store.state.task.hash][f.hash];
-            }
+            try {
+                this.$store.state.task = this.$store.state.process.tasks.filter(a => a.hash == this.$store.state.data.startedProcesses[this.$store.state.process.hash].currentTaskID)[0];
+                if (!this.checkCompleted())
+                    for (let f of this.$store.state.task.fields)
+                        f.data.value = f.type != "Checkbox" ? "" : false;
+                else {
+                    for (let f of this.$store.state.task.fields)
+                        f.data.value = this.$store.state.data.startedProcesses[this.$store.state.process.hash].tasks[this.$store.state.task.hash][f.hash];
+                }
+            } catch (error) { console.error("CurrentTask.vue - load:", error); }     
         },
         checkRequired() {
-            for (let f of this.$store.state.task.fields) {
-                if (f.data.value != undefined)
-                    if (f.data.required && f.data.value.toString() == "") 
-                        return false;
-            }
-            return true;
+            try {
+                for (let f of this.$store.state.task.fields) {
+                    if (f.data.value != undefined)
+                        if (f.data.required && f.data.value.toString() == "")
+                            return false;
+                }
+                return true;
+            } catch (error) { console.error("CurrentTask.vue - checkRequired:", error); }     
         },
         checkCompleted() {
-            return !!this.$store.state.data.startedProcesses[this.$store.state.process.hash].tasks[this.$store.state.task.hash];
+            try {
+                return !!this.$store.state.data.startedProcesses[this.$store.state.process.hash].tasks[this.$store.state.task.hash];
+            } catch (error) { console.error("CurrentTask.vue - checkCompleted:", error); }  
         },
         async completeTask() {
-            this.$store.state.loading = true;
-            let values = {};
-            for (let f of this.$store.state.task.fields)
-                values[f.hash] = f.data.value;
+            try {
+                this.$store.state.loading = true;
+                let values = {};
+                for (let f of this.$store.state.task.fields)
+                    values[f.hash] = f.data.value;
 
-            let next = "";
-            for (let t of this.$store.state.process.tasks) {
-                if (t.hash == this.$store.state.task.hash)
-                    switch (t.next.type) {
-                        case "Automatic":
-                            next = this.$store.state.process.tasks[t.index + 1].hash; break;
-                        case "Task": next = t.next.data.next; break;
-                        default: break;
-                    }
-            }
+                let next = "";
+                for (let t of this.$store.state.process.tasks) {
+                    if (t.hash == this.$store.state.task.hash)
+                        switch (t.next.type) {
+                            case "Automatic":
+                                next = this.$store.state.process.tasks[t.index + 1].hash; break;
+                            case "Task": next = t.next.data.next; break;
+                            default: break;
+                        }
+                }
 
-            let task = "startedProcesses." + this.$store.state.process.hash + ".tasks." + this.$store.state.task.hash;
-            let nextTaskId = "startedProcesses." + this.$store.state.process.hash + ".currentTaskID";
+                let task = "startedProcesses." + this.$store.state.process.hash + ".tasks." + this.$store.state.task.hash;
+                let nextTaskId = "startedProcesses." + this.$store.state.process.hash + ".currentTaskID";
 
-            let updateRef = doc(db, "users/", this.$store.state.data.id);
-            await updateDoc(updateRef, {
-                [task]: values,
-                [nextTaskId]: next,
-            });
+                let updateRef = doc(db, "users/", this.$store.state.data.id);
 
-            updateRef = doc(db, "process/", this.$store.state.process.hash, "tasks/", this.$store.state.task.hash);
-            await updateDoc(updateRef, {
-                inProgress: arrayRemove(this.$store.state.data.id),
-                finished: arrayUnion(this.$store.state.data.id)
-            });
+                try {
+                    await updateDoc(updateRef, {
+                        [task]: values,
+                        [nextTaskId]: next,
+                    });
+                } catch (error) { console.error("CurrentTask.vue - completeTask - updateDoc:", error); }  
 
-            await this.$store.dispatch('logEvent', {
-                who: this.$store.state.data.username,
-                did: " finished task ",
-                what: this.$store.state.task.name,
-            });
+                try {
+                    updateRef = doc(db, "process/", this.$store.state.process.hash, "tasks/", this.$store.state.task.hash);
+                    await updateDoc(updateRef, {
+                        inProgress: arrayRemove(this.$store.state.data.id),
+                        finished: arrayUnion(this.$store.state.data.id)
+                    });
+                } catch (error) { console.error("CurrentTask.vue - completeTask - updateDoc2 - arrayRemove - arrayUnion:", error); }  
 
-            this.$store.state.data.startedProcesses[this.$store.state.process.hash].tasks[this.$store.state.task.hash] = values;
-            this.$store.state.data.startedProcesses[this.$store.state.process.hash].currentTaskID = next;
+                await this.$store.dispatch('logEvent', {
+                    who: this.$store.state.data.username,
+                    did: " finished task ",
+                    what: this.$store.state.task.name,
+                });
 
-            this.$store.state.loading = false;
-            this.load();
-            if (!this.$store.state.task.visibilityUsers.includes(this.$store.state.data.tag))
-                this.$store.state.currentWindow = "ViewProcess";
+                this.$store.state.data.startedProcesses[this.$store.state.process.hash].tasks[this.$store.state.task.hash] = values;
+                this.$store.state.data.startedProcesses[this.$store.state.process.hash].currentTaskID = next;
+
+                this.$store.state.loading = false;
+                this.load();
+                if (!this.$store.state.task.visibilityUsers.includes(this.$store.state.data.tag))
+                    this.$store.state.currentWindow = "ViewProcess";
+            } catch (error) { console.error("CurrentTask.vue - completeTask:", error); }  
         }
     }
 

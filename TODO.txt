@@ -1,23 +1,14 @@
-PROCESS DIAGRAM 1/4
-    + generation
-    - clickability
-    - admin
-    + user 
+Light/Dark mode
 
-PROCESS ANALYTICS
+re-test everything
 
-START PROCESS
-    + add user to processStartedUsers
-    + add process to startedProcesses to user
+style update all 
 
-startedProcesses: {
-    processID: {
-        currentTaskID,
-        tasks: {
-            taskID: {
-                state: "Waiting, Started, Finished"
-                taskData: {}               
-            }            
-        } 
-    }
-}
+PROCESSES - change it 
+
+refactor code
+<!----------------------------------------text------------------------------------------>
+<!--/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-text-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-->
+<!--text--> 
+
+console.error("LoginSingUp.vue - createUserWithEmailAndPassword:", error);

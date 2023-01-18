@@ -30,9 +30,9 @@
             <div class="ml-2 mt-0.5">{{ data.fieldLabel }}</div>
         </div>
 
-        <div v-if="isActive" @click="deleteField()" class="absolute right-2 top-1/2 -mt-2 del">
-            <font-awesome-icon icon="circle" class="rounded-full o absolute" size="lg" />
-            <font-awesome-icon icon="xmark" class="rounded-full x icon absolute ml-1" size="lg" />
+        <div v-if="isActive" @click="deleteField()" class="absolute right-2.5 top-1/2 -mt-2.5">
+            <i class="fa-solid fa-circle text-main_blackblue text-2xl absolute rounded-full"></i>
+            <i class="fa-solid fa-circle-xmark text-main_red text-2xl absolute rounded-full hover:text-main_white hover:cursor-pointer"></i>
         </div>
         
     </div>
@@ -49,7 +49,6 @@ export default {
     },  
     data() {
         return {
-
             fieldName: 'Field Name',
             fieldDescription: 'Field Description',
             defaultValue: 'Enter text ...',
@@ -57,14 +56,16 @@ export default {
         }
     },
     methods: {
-        async deleteField() {
-            var index = this.$store.state.task.fields.map(e => e.active).indexOf(true);
-            if (index > -1) {
-                this.$store.state.task.fields.splice(index, 1);
-                this.$store.state.creatingField = false;
-                this.$store.state.fieldSelected = false;
-            }
-            this.$store.dispatch('checkUpdate2');
+        deleteField() {
+            try {
+                var index = this.$store.state.task.fields.map(e => e.active).indexOf(true);
+                if (index > -1) {
+                    this.$store.state.task.fields.splice(index, 1);
+                    this.$store.state.creatingField = false;
+                    this.$store.state.fieldSelected = false;
+                }
+                this.$store.dispatch('checkTaskUpdate');
+            } catch (error) { console.error("Field.vue - deleteField:", error); }
         },
     }
 }
@@ -77,17 +78,5 @@ export default {
     background: rgba(4, 38, 48, 0.5);
     outline-width: 0;
     border: solid #010910 2px;
-}
-.del {
-    &:hover {
-        filter: saturate(0%) contrast(100%) brightness(200%);
-        cursor: pointer;
-    }
-    .o {
-        filter: invert(75%) sepia(88%) saturate(2267%) hue-rotate(347deg) brightness(92%) contrast(86%);
-    }
-    .x {
-        filter: invert(100%) brightness(30%);
-    }
 }
 </style>
