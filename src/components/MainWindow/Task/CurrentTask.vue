@@ -108,25 +108,27 @@ export default {
                 let updateRef = doc(db, "users/", this.$store.state.data.id);
 
                 try {
-                    await updateDoc(updateRef, {
+                    /*await updateDoc(updateRef, {
                         [task]: values,
                         [nextTaskId]: next,
-                    });
+                    });*/
                 } catch (error) { console.error("CurrentTask.vue - completeTask - updateDoc:", error); }  
 
                 try {
                     updateRef = doc(db, "process/", this.$store.state.process.hash, "tasks/", this.$store.state.task.hash);
+                    console.log(this.$store.state.task.inProgress);
+                    let toRemove = this.$store.state.task.inProgress.filter(t => t.userID == this.$store.state.data.id)[0];
                     await updateDoc(updateRef, {
-                        inProgress: arrayRemove(this.$store.state.data.id),
-                        finished: arrayUnion(this.$store.state.data.id)
+                        inProgress: arrayRemove(toRemove != undefined ? toRemove : 0),
+                        finished: arrayUnion({userID: this.$store.state.data.id, endTime: new Date().getTime()})
                     });
                 } catch (error) { console.error("CurrentTask.vue - completeTask - updateDoc2 - arrayRemove - arrayUnion:", error); }  
 
-                await this.$store.dispatch('logEvent', {
+                /*await this.$store.dispatch('logEvent', {
                     who: this.$store.state.data.username,
                     did: " finished task ",
                     what: this.$store.state.task.name,
-                });
+                });*/
 
                 this.$store.state.data.startedProcesses[this.$store.state.process.hash].tasks[this.$store.state.task.hash] = values;
                 this.$store.state.data.startedProcesses[this.$store.state.process.hash].currentTaskID = next;

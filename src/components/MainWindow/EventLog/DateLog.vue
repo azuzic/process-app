@@ -21,7 +21,7 @@ export default {
     methods: {
         format(date) {
             let array = date.split("/");
-            return array[1] + "/" + array[2] + "/" + array[0];
+            return array[2] + "/" + array[1] + "/" + array[0];
         }
     }
 }

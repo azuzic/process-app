@@ -227,16 +227,16 @@ export default {
         async addUser() {
             try {
                 this.$store.state.loading = true;
-                try {
+                try { //add process to user processes in database
                     const docRef = doc(db, "users/", this.$store.state.userToAdd.id);
                     await updateDoc(docRef, {
                         processes: arrayUnion(this.$store.state.process.hash),
                     });
                 } catch (error) { console.error("ProcessUsers.vue - addUser - updateDoc - arrayUnion:", error); }   
 
-                this.$store.state.process.users.push({ name: this.$store.state.userToAdd.username, tag: this.tag, id: this.$store.state.userToAdd.id, state: 'None' });
+                this.$store.state.process.users.push({ name: this.$store.state.userToAdd.username, tag: this.tag, id: this.$store.state.userToAdd.id, state: 'None', started: 0, finished: 0 });
 
-                try {
+                try { //add user to process users in database
                     const docRef2 = doc(db, "process/", this.$store.state.process.hash);
                     await updateDoc(docRef2, {
                         users: this.$store.state.process.users,

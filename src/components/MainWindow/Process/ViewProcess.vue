@@ -50,12 +50,13 @@ export default {
                 if (this.$store.state.data.startedProcesses[this.$store.state.process.hash]) {
                     let task2 = this.$store.state.tasksOriginal.filter(a => a.hash == task.hash)[0];
                     if (!this.$store.state.task.visibilityUsers.includes(this.$store.state.data.tag)) {
-                        switch (task2.next.type) {
-                            case "Automatic":
-                                if (this.$store.state.tasksOriginal[task2.index + 1] != undefined) {
-                                    return this.$store.state.tasksOriginal[task2.index + 1].hash == this.$store.state.data.startedProcesses[this.$store.state.process.hash].currentTaskID;
-                                } break;
-                            default: break;
+                        if (task2 != undefined)
+                            switch (task2.next.type) {
+                                case "Automatic":
+                                    if (this.$store.state.tasksOriginal[task2.index + 1] != undefined) {
+                                        return this.$store.state.tasksOriginal[task2.index + 1].hash == this.$store.state.data.startedProcesses[this.$store.state.process.hash].currentTaskID;
+                                    } break;
+                                default: break;
                         }
                     }
                     return task.hash == this.$store.state.data.startedProcesses[this.$store.state.process.hash].currentTaskID;
@@ -69,34 +70,36 @@ export default {
                 let updatingUser = {};
                 let updateRef = doc(db, "process/", this.$store.state.process.hash);
 
-                try {
+                try { //Remove user from process users in database, update user state 
                     for (let user of this.$store.state.process.users) {
                         if (user.id == this.$store.state.data.id) {
                             await updateDoc(updateRef, {
                                 users: arrayRemove(user)
                             });
                             user.state = "Started";
+                            user.started = new Date().getTime();
                             updatingUser = user;
                         }
                     }
                 } catch (error) { console.error("ViewProcess.vue - startProcess - updateDoc - arrayRemove:", error); }   
-                try {
+                
+                try { //Add back user to process users with updated data
                     await updateDoc(updateRef, {
                         users: arrayUnion(updatingUser)
                     });
                 } catch (error) { console.error("ViewProcess.vue - startProcess - updateDoc - arrayUnion:", error); }   
                 
-                try {
+                try { //Update task started & inProgress users
                     updateRef = doc(db, "process/", this.$store.state.process.hash, "tasks/", this.$store.state.process.tasks[0].hash);
                     await updateDoc(updateRef, {
-                        started: arrayUnion(this.$store.state.data.id),
+                        started: arrayUnion({userID: this.$store.state.data.id, startTime: new Date().getTime()}),
                         inProgress: arrayUnion(this.$store.state.data.id)
                     });
                 } catch (error) { console.error("ViewProcess.vue - startProcess - updateDoc2 - arrayUnion:", error); }   
          
                 let startedProcess = {};
                 startedProcess = {
-                    currentTaskID: this.$store.state.process.tasks[0].hash,
+                    currentTaskID: this.$store.state.process.tasks[0].hash,                                                                        
                     tasks: {},
                 }
                 let startedProcesses = "startedProcesses." + this.$store.state.process.hash;

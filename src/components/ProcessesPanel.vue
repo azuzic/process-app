@@ -83,7 +83,7 @@ export default {
                 visibilityUsers: ["ADMIN", "USER"],
                 editUsers: ["ADMIN"],
                 completionUsers: ["ADMIN", "USER"],
-                users: [ { name: this.$store.state.data.username, tag: "ADMIN", id: this.$store.state.data.id, state: "None" } ], 
+                users: [ { name: this.$store.state.data.username, tag: "ADMIN", id: this.$store.state.data.id, state: "None", started: 0, finished: 0 } ], 
                 admin: this.$store.state.data.username,
             };
             this.$store.state.processes.push(this.$store.state.process);
