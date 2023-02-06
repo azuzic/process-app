@@ -61,5 +61,12 @@ export default {
     components: {
         BlockButton
     },
+    mounted() {
+        if (this.$store.state.data.startedProcesses[this.$store.state.process.hash]) {
+            let currentTaskID = this.$store.state.data.startedProcesses[this.$store.state.process.hash].currentTaskID;
+            if (currentTaskID != "" && currentTaskID != "End")
+                this.$store.state.task = this.$store.state.process.tasks.filter(task => task.hash == currentTaskID)[0];
+        };
+    }
 }
 </script>

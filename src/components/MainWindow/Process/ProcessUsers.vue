@@ -121,7 +121,7 @@
 import Chip from '../../Other/Chip.vue';
 import ProcessFuncButtons from "./Buttons/ProcessFuncButtons.vue";
 import TagSelect from "./Buttons/TagSelect.vue";
-import { db, updateDoc, doc, arrayRemove, arrayUnion } from "@/firebase";
+import { db, updateDoc, deleteField, doc, arrayRemove, arrayUnion } from "@/firebase";
 export default {
     name: "ProcessUsers",
     components: {
@@ -271,8 +271,19 @@ export default {
                 this.$store.state.process.users = this.$store.state.process.users.filter(u => u.id !== user.id);
 
                 try {
-                    const docRef2 = doc(db, "process/", this.$store.state.process.hash);
-                    await updateDoc(docRef2, {
+                    const docRef = doc(db, "users/", user.id);
+                    await updateDoc(docRef, {
+                        processes: arrayRemove(this.$store.state.process.hash),
+                    });
+                    let startedProcess = "startedProcesses." + this.$store.state.process.hash;
+                    await updateDoc(docRef, {
+                        [startedProcess]: deleteField(),
+                    });
+                } catch (error) { console.error("ProcessUsers.vue - deleteProcess - updateDoc:", error); }
+
+                try {
+                    const docRef = doc(db, "process/", this.$store.state.process.hash);
+                    await updateDoc(docRef, {
                         users: this.$store.state.process.users,
                     });
                 } catch (error) { console.error("ProcessUsers.vue - removeUser - updateDoc2:", error); }   

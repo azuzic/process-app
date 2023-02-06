@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { doc, db, setDoc, updateDoc, deleteDoc, arrayRemove, arrayUnion } from "@/firebase";
+import { doc, db, setDoc, updateDoc, deleteDoc, arrayRemove, arrayUnion, deleteField } from "@/firebase";
 export default {
     name: "EditTask",
     methods: {
@@ -41,6 +41,19 @@ export default {
                 try {
                     await deleteDoc(doc(db, "process/", hash));
                 } catch (error) { console.error("ProcessFuncButtons.vue - deleteProcess - deleteDoc:", error); }
+
+                for (const user of this.$store.state.process.users) {
+                    try {
+                        const docRef = doc(db, "users/", user.id);
+                        await updateDoc(docRef, {
+                            processes: arrayRemove(this.$store.state.process.hash),
+                        });
+                        let startedProcess = "startedProcesses." + this.$store.state.process.hash;
+                        await updateDoc(docRef, {
+                            [startedProcess]: deleteField(),
+                        });
+                    } catch (error) { console.error("ProcessUsers.vue - deleteProcess - updateDoc:", error); }
+                }
         
                 try {
                     let updateRef = doc(db, "users/", this.$store.state.data.id);

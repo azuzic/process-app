@@ -24,7 +24,7 @@
             <div v-if="!$store.state.loading && !checkCompleted()" @click="checkRequired() ? completeTask() : ''"
                 class="process justify-around bg-main_green px-4 rounded flex items-center w-fit py-2"
                 :class="checkRequired() ? 'hover:bg-main_white hover:cursor-pointer' : 'opacity-50 brightness-50'">
-                <b class="text-lg text-main_darktext">{{ $store.state.creatingTask ? 'Save task' : 'Update task' }}</b>
+                <b class="text-lg text-main_darktext"> Complete task</b>
             </div>
             <div v-else-if="!$store.state.loading" class="justify-around px-4 rounded flex items-center w-fit">
                 <b class="text-lg text-main_cyan">Task completed !</b>
@@ -60,12 +60,15 @@ export default {
         load() {
             try {
                 this.$store.state.task = this.$store.state.process.tasks.filter(a => a.hash == this.$store.state.data.startedProcesses[this.$store.state.process.hash].currentTaskID)[0];
-                if (!this.checkCompleted())
-                    for (let f of this.$store.state.task.fields)
-                        f.data.value = f.type != "Checkbox" ? "" : false;
-                else {
-                    for (let f of this.$store.state.task.fields)
-                        f.data.value = this.$store.state.data.startedProcesses[this.$store.state.process.hash].tasks[this.$store.state.task.hash][f.hash];
+                
+                if (this.$store.state.task) {
+                    if (!this.checkCompleted())
+                        for (let f of this.$store.state.task.fields)
+                            f.data.value = f.type != "Checkbox" ? "" : false;
+                    else {
+                        for (let f of this.$store.state.task.fields)
+                            f.data.value = this.$store.state.data.startedProcesses[this.$store.state.process.hash].tasks[this.$store.state.task.hash][f.hash];
+                    }
                 }
             } catch (error) { console.error("CurrentTask.vue - load:", error); }     
         },
@@ -81,6 +84,7 @@ export default {
         },
         checkCompleted() {
             try {
+                if (!this.$store.state.task) return false;
                 return !!this.$store.state.data.startedProcesses[this.$store.state.process.hash].tasks[this.$store.state.task.hash];
             } catch (error) { console.error("CurrentTask.vue - checkCompleted:", error); }  
         },
@@ -96,47 +100,64 @@ export default {
                     if (t.hash == this.$store.state.task.hash)
                         switch (t.next.type) {
                             case "Automatic":
-                                next = this.$store.state.process.tasks[t.index + 1].hash; break;
+                                if (this.$store.state.process.tasks[t.index + 1] == null)
+                                    next = "End"
+                                else next = this.$store.state.process.tasks[t.index + 1].hash; break;
                             case "Task": next = t.next.data.next; break;
                             default: break;
                         }
                 }
-
+                
                 let task = "startedProcesses." + this.$store.state.process.hash + ".tasks." + this.$store.state.task.hash;
                 let nextTaskId = "startedProcesses." + this.$store.state.process.hash + ".currentTaskID";
 
                 let updateRef = doc(db, "users/", this.$store.state.data.id);
-
+                
                 try {
-                    /*await updateDoc(updateRef, {
+                    await updateDoc(updateRef, {
                         [task]: values,
                         [nextTaskId]: next,
-                    });*/
+                    });
                 } catch (error) { console.error("CurrentTask.vue - completeTask - updateDoc:", error); }  
 
                 try {
                     updateRef = doc(db, "process/", this.$store.state.process.hash, "tasks/", this.$store.state.task.hash);
-                    console.log(this.$store.state.task.inProgress);
-                    let toRemove = this.$store.state.task.inProgress.filter(t => t.userID == this.$store.state.data.id)[0];
+                    let user = this.$store.state.task.inProgress.filter(t => t.userID == this.$store.state.data.id)[0];
                     await updateDoc(updateRef, {
-                        inProgress: arrayRemove(toRemove != undefined ? toRemove : 0),
+                        inProgress: arrayRemove(user != undefined ? user : 0),
                         finished: arrayUnion({userID: this.$store.state.data.id, endTime: new Date().getTime()})
                     });
+                    if (next != "End") {
+                        updateRef = doc(db, "process/", this.$store.state.process.hash, "tasks/", next);
+                        await updateDoc(updateRef, {
+                            inProgress: arrayUnion(this.$store.state.data.id),
+                            started: arrayUnion({ userID: this.$store.state.data.id, startTime: new Date().getTime() })
+                        });
+                    }
                 } catch (error) { console.error("CurrentTask.vue - completeTask - updateDoc2 - arrayRemove - arrayUnion:", error); }  
 
-                /*await this.$store.dispatch('logEvent', {
+                await this.$store.dispatch('logEvent', {
                     who: this.$store.state.data.username,
                     did: " finished task ",
                     what: this.$store.state.task.name,
-                });*/
+                });
 
                 this.$store.state.data.startedProcesses[this.$store.state.process.hash].tasks[this.$store.state.task.hash] = values;
                 this.$store.state.data.startedProcesses[this.$store.state.process.hash].currentTaskID = next;
 
                 this.$store.state.loading = false;
-                this.load();
-                if (!this.$store.state.task.visibilityUsers.includes(this.$store.state.data.tag))
+
+                if (next != "End") {
+                    this.load();
+                    if (!this.$store.state.task.visibilityUsers.includes(this.$store.state.data.tag))
+                        this.$store.state.currentWindow = "ViewProcess";
+                }
+                else {
+                    this.$store.state.task.visibilityUsers = [];
                     this.$store.state.currentWindow = "ViewProcess";
+                    await this.$store.dispatch('updateUserStep');
+                }
+
             } catch (error) { console.error("CurrentTask.vue - completeTask:", error); }  
         }
     }

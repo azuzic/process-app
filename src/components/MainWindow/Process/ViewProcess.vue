@@ -20,15 +20,18 @@
             </div>
         </div>
         
-        <div>
+        <div v-if="$store.state.process.tasks.length > 0">
             <div v-if="!$store.state.loading && !$store.state.data.startedProcesses[$store.state.process.hash]" @click="startProcess()"
                 class="process justify-around bg-main_green px-4 rounded flex items-center w-fit">
                 <b class="text-lg text-main_darktext">Start process</b>
             </div>
-            <div class="justify-around px-4 rounded flex items-center w-fit" v-else-if="!$store.state.loading">
+            <div class="justify-around px-4 rounded flex items-center w-fit" v-else-if="!$store.state.loading && $store.state.data.startedProcesses[$store.state.process.hash].currentTaskID != 'End'">
                 <b class="text-lg text-main_cyan">Process started !</b>
                 <b v-if="!$store.state.task.visibilityUsers.includes($store.state.data.tag)" 
                 class="text-lg text-main_red ml-4">Waiting for next task ...</b>
+            </div>
+            <div v-else-if="$store.state.data.startedProcesses[$store.state.process.hash].currentTaskID == 'End'" class="justify-around px-4 rounded flex items-center w-fit">
+                <b class="text-lg text-main_green">Process completed !</b>
             </div>
             <div class="flex items-center">
                 <i v-if="$store.state.loading" class="fa-solid fa-spinner fa-spin-pulse text-main_white text-2xl"></i>

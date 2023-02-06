@@ -169,7 +169,9 @@ export default createStore({
                         this.state.data.lastTask = doc.data().lastTask;
                         this.state.data.lastWindow = doc.data().lastWindow;
                         this.state.data.startedProcesses =
-                            doc.data().startedProcesses;
+                            doc.data().startedProcesses == null
+                                ? {}
+                                : doc.data().startedProcesses;
                     }
                 });
                 const querySnapshot2 = await getDocs(collection(db, "process"));

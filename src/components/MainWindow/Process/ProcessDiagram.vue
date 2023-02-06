@@ -23,7 +23,9 @@
 
                     <!--ENDING POINT-->
                     <div class="flex flex-col justify-center items-center mt-4 z-10">
-                        <div class="border-4 border-main_blackblue bg-main_red rounded-full w-10 h-10" id="End"></div>
+                        <div v-if="$store.state.data.startedProcesses[$store.state.process.hash]" class="border-4 border-main_blackblue rounded-full w-10 h-10" :class="$store.state.data.startedProcesses[$store.state.process.hash].currentTaskID == 'End' ? 'bg-main_cyan' : 'bg-main_red'" id="End"></div>
+                        <div v-else="$store.state.data.startedProcesses[$store.state.process.hash]"
+                            class="border-4 bg-main_red border-main_blackblue rounded-full w-10 h-10" id="End"></div>
                         <div class="font-bold">End</div>
                     </div>
                 </div>

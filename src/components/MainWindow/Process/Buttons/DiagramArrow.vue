@@ -156,9 +156,7 @@ export default {
         if (this.task != undefined) {
             if (this.task.next.type == 'If') {
                 this.accepted = await this.acceptedFunc(this.task.next.data.accepted.id, true);
-                //console.log("accepted", this.accepted);
                 this.declined = await this.acceptedFunc(this.task.next.data.declined.id, false);
-                //console.log("declined", this.declined);
             }
             if (this.task.next.type == 'Task')
                 if (this.task.next.data.name == 'End')
