@@ -1,6 +1,6 @@
-# Procees App
+# Process App
 
-Procees is an automation application for managing tasks for a large number of people. It is built using:
+Process App is an automation application for managing processes and tasks for a large number of people. It is built using:
 
 - ![Vue 3](https://img.shields.io/badge/-Vue%203-4FC08D?style=flat&logo=Vue.js&logoColor=white)
 - ![Vite](https://img.shields.io/badge/-Vite-646CFF?style=flat&logo=Vite&logoColor=white)
@@ -9,13 +9,13 @@ It utilizes ![Firebase](https://img.shields.io/badge/-Firebase-FFCA28?style=flat
 
 ## Overview
 
-The Procees app allows users to manage processes consisting of different blocks of activity. Users can view a list of processes, click on a process to view its details, and interact with various blocks associated with the process. These blocks can include starting a process, completing a form, having a conversation, and receiving system notifications.
+The Process app allows users to manage processes consisting of different blocks of activity. Users can view a list of processes, click on a process to view its details, and interact with various blocks associated with the process. These blocks can include starting a process, completing a form, having a conversation, and receiving system notifications.
 
 The app is divided into two main parts: ADMIN and USER.
 
 ## Additional Dependencies
 
-The Procees app utilizes the following additional dependencies:
+The Process app utilizes the following additional dependencies:
 
 - ![Firebase](https://img.shields.io/badge/-Firebase-FFCA28?style=flat&logo=Firebase&logoColor=black) Firebase is a comprehensive suite of cloud-based tools provided by Google for building web and mobile applications. It offers features such as authentication, real-time database, cloud storage, and more.
 - ![Crypto-Random-String](https://img.shields.io/badge/-Crypto--Random--String-FF6F00?style=flat) Crypto-Random-String is a JavaScript library that provides a simple way to generate cryptographically strong random strings. It is often used for generating unique identifiers or secure tokens.
@@ -25,7 +25,7 @@ The Procees app utilizes the following additional dependencies:
 
 ## Getting Started
 
-To get started with the Procees app locally, follow these steps:
+To get started with the Process app locally, follow these steps:
 
 1. Clone the repository:
 
@@ -53,7 +53,7 @@ To get started with the Procees app locally, follow these steps:
    npm run dev -- --host
    ```
 
-Open your web browser and visit `localhost` to see the AquaPod frontend in action.
+Open your web browser and visit `localhost` to see the Process App in action.
 
 ## ADMIN
 
@@ -256,8 +256,8 @@ The process diagram is adapted to the user's assigned process automatically.
 
 ## Contributing
 
-If you would like to contribute to AquaPod, feel free to open issues and submit pull requests. We welcome contributions from the community!
+If you would like to contribute to Process App, feel free to open issues and submit pull requests. We welcome contributions from the community!
 
 ## License
 
-The AquaPod frontend is released under the ![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)
+The Process App is released under the ![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)
